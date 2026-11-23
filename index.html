@@ -1752,7 +1752,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 .ax-h .lead,.ax-h .venue{box-sizing:content-box;margin:0;padding-left:calc(var(--g3) - var(--g1))}
 .ax-h .lead{max-width:none;text-wrap:pretty}
 @media (max-width:1180px){.br-d{display:none}}
-.ax-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:clamp(48px,5vw,76px) var(--gr) 0 var(--g1);background:var(--line)}
+.ax-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:1px;margin:clamp(48px,5vw,76px) var(--gr) 0 var(--g1);background:var(--line)}
 .ax-half{position:relative;height:clamp(560px,50vw,760px);overflow:hidden;background:var(--night)}
 .ax-half img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:scale 600ms var(--ease-out)}
 .ax-half::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(14,11,9,.94) 0%,rgba(14,11,9,.72) 26%,rgba(14,11,9,.08) 58%,rgba(14,11,9,0) 100%)}
@@ -1763,12 +1763,14 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 .ax-l{max-width:24em;color:var(--sand);font-size:17px;line-height:1.5}
 .ax-a{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;margin-top:14px}
 .ax-a .ax-cmp{margin-left:0}
+.ax-side .ax-c .b4-t{font-size:clamp(24px,2vw,32px)}.ax-side .ax-l{color:var(--mute)}
 @media (hover:hover) and (pointer:fine){.ax-half:hover img{scale:1.03}}
 @media (max-width:980px){
   .mp-cta{opacity:1;pointer-events:auto}
   .ax-h .lead,.ax-h .venue{padding-left:0}
   .ax-two{grid-template-columns:minmax(0,1fr)}
   .ax-half{height:500px}
+  .ax-side{height:320px}
 }
 .fx-l{padding-bottom:3px;color:var(--sand);font-size:15px;text-decoration:none;border-bottom:1px solid rgba(242,233,222,.4)}
 /* финальный блок: вопросы, затем кадр и две плашки */
@@ -2342,7 +2344,8 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
   <!-- Отзывы с Яндекс Карт — скрыт до появления реальных отзывов (схема клиента) -->
   <section class="bx" id="otzyvy" hidden aria-label="Отзывы"></section>
 
-  <!-- 05 · Без угля — APEX: фото, плюсы и таблица на одном экране, дегустация строкой -->
+  <!-- 06 · Без угля — APEX (23.11.2026, вариант A): APEX — главная широкая половина, угли — узкая для контраста.
+       Выбор чаш только в конструкторе: кнопка выбирает APEX и ведёт к расчёту; дегустация строкой -->
   <section class="bx alt axs" id="vozmozhnosti" data-n="06" data-name="Без угля · APEX" aria-labelledby="apex-title">
     <div class="ax-h">
       <p class="label" data-b3-in>Без угля · APEX</p>
@@ -2351,26 +2354,24 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       <p class="venue" data-b3-in>Формат согласуем с площадкой</p>
     </div>
     <div class="ax-two" data-b3-in>
-      <article class="ax-half sel-card">
+      <article class="ax-half ax-side">
         <img src="assets/f-apex-classic.webp" alt="Мастер Magic с углями" loading="lazy">
         <div class="ax-c">
           <p class="label">Классика</p>
           <h3 class="b4-t">На углях</h3>
           <p class="ax-l">Мастер следит за углями.</p>
-          <div class="ax-a"><button class="btn btn-sm btn-light" type="button" data-cf-set="bowl=Классика" data-cf-stay data-on="В вашем вечере"><span>Выбрать классику</span></button></div>
         </div>
       </article>
-      <article class="ax-half sel-card">
+      <article class="ax-half ax-main">
         <img src="assets/f-apex-g.webp" alt="Чаша APEX" loading="lazy">
         <div class="ax-c">
           <p class="label">APEX</p>
           <h3 class="b4-t">Электронный нагрев</h3>
           <p class="ax-l">Нет искр и пепла. Где угли запрещены, формат согласуем заранее.</p>
-          <div class="ax-a"><button class="btn btn-sm btn-light" type="button" data-cf-set="bowl=APEX" data-cf-stay data-on="В вашем вечере"><span>Выбрать APEX</span></button><button class="ax-cmp" type="button" data-pop="degust">Записаться на дегустацию</button></div>
+          <div class="ax-a"><button class="btn btn-sm btn-light" type="button" data-cf-set="bowl=APEX"><span>Собрать вечер с APEX</span></button><button class="ax-cmp" type="button" data-pop="degust">Записаться на дегустацию</button></div>
         </div>
       </article>
     </div>
-    <div class="mp-next" id="ax-next" data-next="bowl" data-hint="Выберите чаши, и они попадут в расчёт вашего вечера." data-b3-in><p class="mp-next-t">Выберите чаши, и они попадут в расчёт вашего вечера.</p><div class="mp-next-a"><a class="fx-l" href="#vecher">Посмотреть расчёт</a><button class="btn btn-sm btn-solid" type="button" data-cf-go><span>Оформить заявку</span></button></div></div>
   </section>
 
   <!-- 06 · Вопросы и контакты: заявка одна — в блоке «Соберите вечер», здесь сводка и переход к ней -->
