@@ -1371,28 +1371,10 @@ html.film-on .pv .film-stick{position:relative;height:100%}
 .pv .film-media::after{background:rgba(9,7,5,.1)}
 .pv-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 420ms linear}
 .pv-v.is-on{opacity:1}
-/* 01 · Обложка на кадре со съёмки клиента (23.11.2026) вместо сгенерированного плана. Свечение — размытая копия кадра
-   в режиме «экран»: светлеют только источники света, чёрное остаётся чёрным; дышит неровно, как живой огонь */
-.cv-ph{position:absolute;inset:0;opacity:0;transition:opacity 480ms cubic-bezier(.2,.7,.2,1);pointer-events:none;overflow:hidden;background:#0d0b09}
-.pv.cv-show:not([data-cv="0"]) .cv-ph{opacity:1}
-.cv-ph-k{position:absolute;inset:0;animation:cvkb 26s ease-in-out infinite alternate}
-.cv-ph picture{position:absolute;inset:0;display:block}
-.cv-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.cv-ph-b{mix-blend-mode:screen;animation:cvbreath 5.6s ease-in-out infinite}
-.cv-ph-b img{filter:blur(26px) saturate(1.5) brightness(1.2)}
-@keyframes cvkb{from{transform:scale(1.02)}to{transform:scale(1.09) translate3d(0,-1.2%,0)}}
-@keyframes cvbreath{0%,100%{opacity:.2}34%{opacity:.48}40%{opacity:.36}47%{opacity:.56}70%{opacity:.3}}
-@media (prefers-reduced-motion:reduce){.cv-ph-k,.cv-ph-b{animation:none}.cv-ph-b{opacity:.3}}
-/* переключатель вариантов обложки — временный, убрать после выбора */
-.cv-sw{position:fixed;left:50%;bottom:14px;translate:-50% 0;z-index:90;display:flex;gap:4px;align-items:center;padding:5px;border:1px solid rgba(242,233,222,.18);background:rgba(20,17,15,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:500 11px/1 Onest,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#A99D8F}
-.cv-sw span{padding:0 8px 0 6px}
-.cv-sw button{all:unset;cursor:pointer;padding:8px 10px;color:#F2E9DE}
-.cv-sw button[aria-pressed="true"]{background:#F2E9DE;color:#14110F}
-.cv-gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 500ms ease}
-.cv-ph.gl .cv-gl{opacity:1}
-.cv-ph.gl .cv-ph-k{visibility:hidden;transition:visibility 0s 520ms}
-.cv-sw{transition:opacity 400ms ease}
-.cv-sw.is-off{opacity:0;pointer-events:none}
+/* 01 · Презентация на фото съёмки клиента в шейдере WebGL (23.11.2026), см. скрипт после блока */
+.cv-ph{position:absolute;inset:0;opacity:0;transition:opacity 500ms ease;pointer-events:none;background:#0d0b09}
+.cv-ph.gl{opacity:1}
+.cv-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
 .pv .film-dark{background:radial-gradient(85% 75% at 50% 50%,rgba(14,11,9,.8) 0%,rgba(14,11,9,.58) 100%);transition:opacity 700ms var(--soft)}
 .pv-ch{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 340ms ease,visibility 0s linear 340ms}
 .pv-ch.is-on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 500ms ease,visibility 0s}
@@ -2310,102 +2292,51 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       roll.appendChild(line)}
     sp.appendChild(roll)});
 
-  // 01 · Презентация (08.11.2026): экран закреплён, один жест — один отрезок настоящего видео до следующей остановки.
-  // Пока отрезок идёт, прокрутка и жесты заблокированы; заставка ждёт, пока видео загрузится целиком.
-  // Назад — наплывом на кадр остановки (видео в браузере назад плавно не играет). С последней главы — обычная прокрутка.
+  // 01 · Презентация (23.11.2026, было 08.11 на ролике): экран закреплён, один жест — одна глава.
+  // Кадры — фото съёмки клиента, смена — погружение в шейдере (__cvGo, ~0,95 с); без WebGL — наплыв кадров в #pv-still.
+  // Тачпад: новый жест (пауза или разгон) срабатывает сразу; при непрерывной прокрутке — следующая глава через 0,45 с после прошлой;
+  // затухающий хвост инерции не листает. С последней главы — обычная прокрутка.
   (function(){
     var sec=document.getElementById('top'),d=document.documentElement;
     if(!sec||!sec.classList.contains('pv'))return;
-    var v='promo';   // выбор Дмитрия 08.11.2026; «Замок» и «3D-арки» — dizajn/gen/out/film5-arhiv/
-    var sz=window.innerWidth/window.innerHeight<.82?'m':'d',base='assets/film5/'+v+'/';
-    var idle=document.getElementById('pv-idle'),film=document.getElementById('pv-film'),still=document.getElementById('pv-still'),dark=document.getElementById('film-dark'),hint=document.getElementById('pv-hint');
+    var sz=window.innerWidth/window.innerHeight<.82?'m':'d';
+    var still=document.getElementById('pv-still'),dark=document.getElementById('film-dark'),hint=document.getElementById('pv-hint');
     var chs=[].slice.call(sec.querySelectorAll('.pv-ch'));
-    var last=chs.length-1,c=0,busy=false,pres=false,ok=false,stops=[],idleP=null,DARK=[0,.74,.74,.6,.9],SMOKE=[1,.5,.5,.5,.3];
-    window.__pvPoster=base+'poster-'+sz+'.webp';still.src=window.__pvPoster;still.classList.add('is-on');
+    var last=chs.length-1,c=0,busy=false,pres=false,DARK=[0,.5,.5,.42,.62],SMOKE=[1,.5,.5,.5,.3];
+    function src(k){return 'assets/slides/s'+k+'-'+sz+'.webp'}
+    window.__pvPoster=src(0);still.src=src(0);still.classList.add('is-on');
     if(!d.classList.contains('film-on')){window.__pvP=1;return}
-    window.__pvP=0;
+    // заставка ждёт обложку и следующий кадр, остальные догружаются
+    window.__pvP=0;var got=0;
+    for(var i=0;i<=last;i++){var im=new Image();im.onload=im.onerror=function(){got++;window.__pvP=Math.min(1,got/2)};im.src=src(i)}
 
-    idle.src=base+'idle-'+sz+'.mp4';
-    idle.addEventListener('playing',function(){idle.classList.add('is-on');still.classList.remove('is-on')},{once:true});
-    function pl(x){var p=x.play();if(p&&p.catch)p.catch(function(){})}
-    pl(idle);
-
-    function stillSrc(k){return base+'stop-'+sz+'-'+k+'.webp'}
-    function loadBlob(url,est){return fetch(url).then(function(r){if(!r.ok)throw new Error('http '+r.status);
-      var total=+r.headers.get('content-length')||est||0;if(!r.body||!total)return r.blob();
-      var rd=r.body.getReader(),got=0,parts=[];
-      return (function pump(){return rd.read().then(function(s){if(s.done)return new Blob(parts,{type:'video/mp4'});parts.push(s.value);got+=s.value.length;window.__pvP=Math.min(.97,got/total);return pump()})})()})}
-    fetch(base+'film.json').then(function(r){return r.json()}).then(function(m){stops=m[sz].stops;idleP=m.idle||null;
-      return loadBlob(base+'film-'+sz+'.mp4',m[sz].size)}).then(function(b){
-      for(var i=0;i<=last;i++){var im=new Image();im.src=stillSrc(i)}
-      film.src=URL.createObjectURL(b);film.load();
-      film.addEventListener('loadeddata',function(){ok=true;window.__pvP=1},{once:true});
-      film.addEventListener('error',function(){window.__pvP=1},{once:true})
-    }).catch(function(){window.__pvP=1});
-
-    // обложка на фото: видна только на главе 0; ролик при уходе с неё стартует с 1,9 с — после сгенерированного плана в нише
-    var PH0=1.9,sw=document.getElementById('cv-sw');
-    function phOn(){return sec.dataset.cv&&sec.dataset.cv!=='0'}
-    function ph0(on){sec.classList.toggle('cv-show',on);if(sw)sw.classList.toggle('is-off',!on)}
     function lock(on){pres=on;d.classList.toggle('pres',on)}
     function mark(n){chs.forEach(function(ch,k){var o=k===n;ch.classList.toggle('is-on',o);ch.inert=!o});if(hint)hint.classList.toggle('is-on',n===0)}
     function shade(n){dark.style.opacity=DARK[n];window.__pvA=SMOKE[n]}
-    function done(n,wait){c=n;setTimeout(function(){busy=false},wait==null?240:wait)}
-    function showStill(n,cb){var im=new Image(),go=function(){still.src=im.src;still.classList.add('is-on');
-      if(n===0){try{idle.currentTime=0}catch(e){}idle.classList.add('is-on');pl(idle);film.classList.remove('is-on');setTimeout(function(){still.classList.remove('is-on')},460)}cb&&cb()};im.onload=go;im.onerror=go;im.src=stillSrc(n)}
-
-    // проигрывание участка ролика до остановки; любой новый жест может его прервать
-    var cancelRun=null;
-    function run(from,to,onNear,onDone,onStart,fast){
-      var fin=false,raf=0,guard=0,near=false;
-      function stop(){fin=true;film.playbackRate=1;cancelAnimationFrame(raf);clearTimeout(guard);film.removeEventListener('timeupdate',check);film.removeEventListener('seeked',start);cancelRun=null}
-      function arrive(){if(fin)return;stop();film.pause();try{film.currentTime=to}catch(e){}if(!near){near=true;onNear&&onNear()}onDone&&onDone()}
-      function check(){var t=film.currentTime;if(fast&&t>=fast){fast=0;film.playbackRate=1}if(!near&&t>=to-.55){near=true;onNear&&onNear()}if(t>=to-.035||film.ended)arrive()}
-      function loop(){if(fin)return;check();raf=requestAnimationFrame(loop)}
-      function start(){if(fin)return;film.classList.add('is-on');still.classList.remove('is-on');onStart&&onStart();film.playbackRate=fast?1.8:1;pl(film);film.addEventListener('timeupdate',check);raf=requestAnimationFrame(loop);guard=setTimeout(arrive,(to-from)*1000+2500)}
-      cancelRun=function(){if(!fin){stop();film.pause()}};
-      if(Math.abs(film.currentTime-from)<.06)start();else{film.addEventListener('seeked',start,{once:true});film.currentTime=from}
-    }
-    // текущий кадр мгновенно закрывает видео, пока оно перематывается, затем растворяется в движении
-    function cover(k,cb){var im=new Image(),go=function(){still.style.transition='none';still.src=im.src;still.classList.add('is-on');void still.offsetWidth;still.style.transition='';cb()};im.onload=go;im.onerror=go;im.src=stillSrc(k)}
-
-    function forward(n){
-      var from=c,to=stops[n],need=stops[from];
-      // петля — это первый план ролика, идущий туда и обратно: стартуем с того же кадра, поэтому склейки не видно
-      var photo=from===0&&phOn();
-      if(photo)need=PH0;
-      else if(from===0&&idleP&&idle.classList.contains('is-on')&&!still.classList.contains('is-on')){var per=idle.duration||idleP.period,ph=(idle.currentTime%per)/per;need=(1-Math.cos(2*Math.PI*ph))/2*idleP.src}
-      mark(-1);
-      function go2(){run(need,to,function(){mark(n);shade(n)},function(){done(n)},from===0?function(){ph0(false);setTimeout(function(){idle.classList.remove('is-on');idle.pause()},450)}:null,from===0&&idleP&&!photo?idleP.src:0)}
-      if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else if(photo&&window.__cvDive)window.__cvDive(go2);else go2();
-    }
-    // назад: фон тоже движется — наплыв на живой план слайда, который доигрывает до своей остановки
-    var BACK=1.25;
-    function back(n){var to=stops[n];mark(-1);cover(c,function(){run(Math.max(0,to-BACK),to,function(){mark(n);shade(n)},function(){done(n)})})}
-    // назад на обложку: наплыв сразу на идущую петлю, с участка, где камера уже в движении
-    function toCover(){mark(-1);cover(c,function(){ph0(true);film.classList.remove('is-on');try{idle.currentTime=(idle.duration||8)*.25}catch(e){}idle.classList.add('is-on');pl(idle);
-      setTimeout(function(){still.classList.remove('is-on');mark(0);shade(0);done(0,520)},140)})}
-    function byStill(n){mark(-1);ph0(n===0);setTimeout(function(){showStill(n,function(){if(n>0)idle.classList.remove('is-on');mark(n);shade(n);done(n,520)})},260)}
-    // вернулись к обложке прокруткой снизу: текущий план оживает, текст остаётся на месте
-    function replay(){if(!ok||!stops.length||c===0||busy)return;if(cancelRun)cancelRun();var to=stops[c];cover(c,function(){run(Math.max(0,to-BACK),to)})}
-
+    var armT=0;
+    function show(from,n,cb){
+      var mid=function(){mark(n);shade(n)};
+      if(window.__cvGo){window.__cvGo(from,n,mid,cb);return}
+      still.classList.remove('is-on');
+      setTimeout(function(){var im=new Image(),go=function(){still.src=im.src;still.classList.add('is-on');mid();setTimeout(cb,420)};im.onload=go;im.onerror=go;im.src=src(n)},300)}
     function go(n){
-      if(busy||n<0)return;
+      if(busy||n<0||n===c)return;
       if(n>last){leaveDown();return}
-      busy=true;if(cancelRun)cancelRun();
-      if(ok&&stops.length){if(n>c)forward(n);else if(n===0)toCover();else back(n)}else byStill(n);
-    }
-    function leaveDown(){busy=true;if(cancelRun)cancelRun();lock(false);window.scrollTo({top:sec.offsetHeight,behavior:'smooth'});setTimeout(function(){busy=false},1000)}
-    function jump0(){window.scrollTo(0,0);lock(true);if(c!==0&&!busy){busy=true;if(cancelRun)cancelRun();if(ok&&stops.length)toCover();else byStill(0)}}
+      busy=true;var from=c;mark(-1);
+      show(from,n,function(){c=n;busy=false;armT=performance.now()+120})}
+    function leaveDown(){busy=true;lock(false);window.scrollTo({top:sec.offsetHeight,behavior:'smooth'});setTimeout(function(){busy=false},1000)}
+    function jump0(){window.scrollTo(0,0);lock(true);if(c!==0&&!busy)go(0)}
 
-    // начальное состояние: восстановленная прокрутка или якорь — без блокировки, плёнка стоит на финале
-    if(window.scrollY>10||location.hash){c=last;mark(last);shade(last);ph0(false);still.src=stillSrc(last);still.classList.add('is-on')}else{lock(true);mark(0);shade(0);ph0(true)}
+    // начальное состояние: восстановленная прокрутка или якорь — без блокировки, на финальной главе
+    if(window.scrollY>10||location.hash){c=last;mark(last);shade(last);still.src=src(last);if(window.__cvSet)window.__cvSet(last)}else{lock(true);mark(0);shade(0)}
 
     function blocked(){return !pres||d.classList.contains('is-loading')||document.querySelector('.pop.is-open,.sheet.is-open')}
     var lastT=0,lastD=0;
     window.addEventListener('wheel',function(e){if(blocked())return;e.preventDefault();
-      var t=performance.now(),dy=e.deltaY*(e.deltaMode===1?16:1),gap=t-lastT,fresh=gap>130||(Math.abs(dy)>Math.abs(lastD)*1.6&&Math.abs(dy)>36);
-      lastT=t;lastD=dy;if(busy||!fresh||Math.abs(dy)<5)return;go(c+(dy>0?1:-1))},{passive:false});
+      var t=performance.now(),dy=e.deltaY*(e.deltaMode===1?16:1),ady=Math.abs(dy),gap=t-lastT,acc=ady>Math.abs(lastD)*1.3+2;
+      lastT=t;lastD=dy;
+      if(busy||t<armT||ady<4)return;
+      if(gap>90||acc||(t-armT>450&&ady>=24))go(c+(dy>0?1:-1))},{passive:false});
     var ty=0,tOn=false;
     window.addEventListener('touchstart',function(e){if(e.touches.length===1){ty=e.touches[0].clientY;tOn=true}},{passive:true});
     window.addEventListener('touchmove',function(e){if(!blocked()&&e.cancelable)e.preventDefault()},{passive:false});
@@ -2417,8 +2348,8 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#"]');if(!a)return;var id=a.getAttribute('href').slice(1);if(!id){e.preventDefault();return}
       if(id==='top'){e.preventDefault();jump0();return}if(pres&&document.getElementById(id))lock(false)},true);
     // вернулись к самому верху — снова презентация, на той главе, где закончили
-    var armed=window.scrollY>innerHeight*.9,away=window.scrollY>80;
-    window.addEventListener('scroll',function(){var y=window.scrollY;if(y>80)away=true;if(y>innerHeight*.9)armed=true;else if(armed&&!pres&&y<innerHeight*.7){armed=false;replay()}
+    var away=window.scrollY>80;
+    window.addEventListener('scroll',function(){var y=window.scrollY;if(y>80)away=true;
       // блокируем снова, только если человек уходил вниз и вернулся: первое событие плавной прокрутки к якорю приходит ещё наверху
       if(!pres&&!busy&&away&&y<=1&&!d.classList.contains('is-loading')){away=false;lock(true)}},{passive:true});
     window.__pvLeave=function(){if(pres)lock(false)};
@@ -2815,7 +2746,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
         if(media)media.style.transform='scale('+(.8+.2*ez).toFixed(4)+')';
         if(el<PRE*.55+DIVE)requestAnimationFrame(f);else{if(media)media.style.transform='';ld.classList.add('is-gone');document.dispatchEvent(new Event('mc:loaded'))}}
       requestAnimationFrame(f)}
-    var im=new Image();im.onload=im.onerror=function(){ready++};im.src=window.__pvPoster||'assets/film5/promo/poster-d.webp';
+    var im=new Image();im.onload=im.onerror=function(){ready++};im.src=window.__pvPoster||'assets/slides/s0-d.webp';
     (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){ready++});
     requestAnimationFrame(tick);
   })();

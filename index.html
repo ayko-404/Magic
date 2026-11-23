@@ -6,8 +6,8 @@
 <title>Кальянный кейтеринг в Москве и МО | Magic Catering</title>
 <meta name="description" content="Выездной кальянный кейтеринг в Москве и Московской области: мастера Magic, оборудование и сервис на весь вечер. Корпоративы, свадьбы, закрытые вечера.">
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preload" as="image" href="assets/film5/promo/poster-d.webp" media="(min-aspect-ratio: 41/50)" fetchpriority="high">
-<link rel="preload" as="image" href="assets/film5/promo/poster-m.webp" media="(max-aspect-ratio: 41/50)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/slides/s0-d.webp" media="(min-aspect-ratio: 41/50)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/slides/s0-m.webp" media="(max-aspect-ratio: 41/50)" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Cinzel:wght@400;500&family=Didact+Gothic&family=Onest:wght@300;400;500&family=Manrope:wght@300;400&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Cinzel:wght@400;500&family=Didact+Gothic&family=Onest:wght@300;400;500&family=Manrope:wght@300;400&display=swap"></noscript>
@@ -1373,28 +1373,10 @@ html.film-on .pv .film-stick{position:relative;height:100%}
 .pv .film-media::after{background:rgba(9,7,5,.1)}
 .pv-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 420ms linear}
 .pv-v.is-on{opacity:1}
-/* 01 · Обложка на кадре со съёмки клиента (23.11.2026) вместо сгенерированного плана. Свечение — размытая копия кадра
-   в режиме «экран»: светлеют только источники света, чёрное остаётся чёрным; дышит неровно, как живой огонь */
-.cv-ph{position:absolute;inset:0;opacity:0;transition:opacity 480ms cubic-bezier(.2,.7,.2,1);pointer-events:none;overflow:hidden;background:#0d0b09}
-.pv.cv-show:not([data-cv="0"]) .cv-ph{opacity:1}
-.cv-ph-k{position:absolute;inset:0;animation:cvkb 26s ease-in-out infinite alternate}
-.cv-ph picture{position:absolute;inset:0;display:block}
-.cv-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.cv-ph-b{mix-blend-mode:screen;animation:cvbreath 5.6s ease-in-out infinite}
-.cv-ph-b img{filter:blur(26px) saturate(1.5) brightness(1.2)}
-@keyframes cvkb{from{transform:scale(1.02)}to{transform:scale(1.09) translate3d(0,-1.2%,0)}}
-@keyframes cvbreath{0%,100%{opacity:.2}34%{opacity:.48}40%{opacity:.36}47%{opacity:.56}70%{opacity:.3}}
-@media (prefers-reduced-motion:reduce){.cv-ph-k,.cv-ph-b{animation:none}.cv-ph-b{opacity:.3}}
-/* переключатель вариантов обложки — временный, убрать после выбора */
-.cv-sw{position:fixed;left:50%;bottom:14px;translate:-50% 0;z-index:90;display:flex;gap:4px;align-items:center;padding:5px;border:1px solid rgba(242,233,222,.18);background:rgba(20,17,15,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:500 11px/1 Onest,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#A99D8F}
-.cv-sw span{padding:0 8px 0 6px}
-.cv-sw button{all:unset;cursor:pointer;padding:8px 10px;color:#F2E9DE}
-.cv-sw button[aria-pressed="true"]{background:#F2E9DE;color:#14110F}
-.cv-gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 500ms ease}
-.cv-ph.gl .cv-gl{opacity:1}
-.cv-ph.gl .cv-ph-k{visibility:hidden;transition:visibility 0s 520ms}
-.cv-sw{transition:opacity 400ms ease}
-.cv-sw.is-off{opacity:0;pointer-events:none}
+/* 01 · Презентация на фото съёмки клиента в шейдере WebGL (23.11.2026), см. скрипт после блока */
+.cv-ph{position:absolute;inset:0;opacity:0;transition:opacity 500ms ease;pointer-events:none;background:#0d0b09}
+.cv-ph.gl{opacity:1}
+.cv-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
 .pv .film-dark{background:radial-gradient(85% 75% at 50% 50%,rgba(14,11,9,.8) 0%,rgba(14,11,9,.58) 100%);transition:opacity 700ms var(--soft)}
 .pv-ch{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 340ms ease,visibility 0s linear 340ms}
 .pv-ch.is-on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 500ms ease,visibility 0s}
@@ -1997,16 +1979,11 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 <main>
   <!-- 01 · Презентация (08.11.2026): экран закреплён, один жест — один отрезок видео до следующей остановки; пока отрезок идёт, прокрутка заблокирована.
        Прежняя плёнка на кадрах — index.src.v54_2026-11-08.html -->
-  <section class="hero film pv cv-show" id="top" data-cv="c" data-fx="heat" data-n="01" data-name="Презентация" aria-labelledby="hero-title">
+  <section class="hero film pv" id="top" data-n="01" data-name="Презентация" aria-labelledby="hero-title">
     <div class="film-stick">
       <div class="film-media" aria-hidden="true">
-        <video class="pv-v" id="pv-idle" muted loop playsinline preload="auto"></video>
-        <video class="pv-v" id="pv-film" muted playsinline preload="auto"></video>
         <img class="pv-v" id="pv-still" alt="">
-        <div class="cv-ph" id="cv-ph" aria-hidden="true"><div class="cv-ph-k">
-          <picture><source media="(max-aspect-ratio: 41/50)" srcset="assets/cover/cv-c-m.webp"><img src="assets/cover/cv-c-d.webp" alt="" decoding="async" fetchpriority="high"></picture>
-          <picture class="cv-ph-b"><source media="(max-aspect-ratio: 41/50)" srcset="assets/cover/cv-c-m.webp"><img src="assets/cover/cv-c-d.webp" alt="" decoding="async"></picture>
-        </div></div>
+        <div class="cv-ph" id="cv-ph" aria-hidden="true"></div>
       </div>
       <div class="film-shade" aria-hidden="true"></div>
       <div class="film-dark" id="film-dark" aria-hidden="true"></div>
@@ -2057,134 +2034,111 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
   </section>
 
 
-  <!-- Временный переключатель эффекта обложки (23.11.2026): «Жар», «Линза», «Волна», «Без эффекта». Убрать после выбора -->
-  <div class="cv-sw" id="cv-sw" role="group" aria-label="Эффект обложки"><span>Эффект</span><button type="button" data-fx="heat">Жар</button><button type="button" data-fx="lens">Линза</button><button type="button" data-fx="wave">Волна</button><button type="button" data-fx="none">Без эффекта</button></div>
   <script>
-  // 01 · Обложка C (23.11.2026): кадр съёмки клиента «кальян под лампами» в шейдере WebGL.
-  // Жар — воздух дрожит над раскалённой чашей; Линза — курсор как стекло колбы; Волна — курсор пускает рябь.
-  // Во всех режимах первый жест вниз — погружение: камера ныряет в свет чаши и выходит в ролик (window.__cvDive).
-  // Без WebGL и при «уменьшить движение» остаётся статичный кадр с CSS-свечением.
+  // 01 · Презентация на кадрах съёмки клиента (23.11.2026). Вместо сгенерированного ролика — 5 фото в шейдере WebGL:
+  // обложка — «Жар» (воздух дрожит над раскалённой чашей), у всех кадров дышит свет и медленно наезжает камера.
+  // Смена главы — погружение (~0,95 с): кадр уходит в глубину с искажением, следующий проступает сквозь тёплую кромку.
+  // Для контроллера презентации: __cvSet(k) — показать главу сразу, __cvGo(from,to,onMid,onEnd) — переход.
+  // Без WebGL и при «уменьшить движение» API нет — контроллер листает кадры в #pv-still наплывом.
   (function(){
-    var sec=document.getElementById('top'),ph=document.getElementById('cv-ph'),sw=document.getElementById('cv-sw');if(!sec||!ph||!sw)return;
-    var fx='heat',MODE={heat:0,lens:1,wave:2};
-    function setFx(v){fx=v;sec.dataset.fx=v;ph.classList.toggle('gl',ready&&v!=='none');
-      [].forEach.call(sw.querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',b.dataset.fx===v?'true':'false')});
-      try{localStorage.setItem('mc-fx',v)}catch(e){}kick()}
-    sw.addEventListener('click',function(e){var b=e.target.closest('button');if(b)setFx(b.dataset.fx)});
-
-    var ready=false,raf=0,kick=function(){};
-    var q=(location.search.match(/[?&]fx=(heat|lens|wave|none)/)||[])[1],st=null;try{st=localStorage.getItem('mc-fx')}catch(e){}
-    var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var sec=document.getElementById('top'),ph=document.getElementById('cv-ph');if(!sec||!ph)return;
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var cv=document.createElement('canvas');cv.className='cv-gl';cv.setAttribute('aria-hidden','true');
-    var gl=rm?null:cv.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,premultipliedAlpha:false,powerPreference:'high-performance'});
-    setFx(q||(/^(heat|lens|wave|none)$/.test(st||'')?st:'heat'));
-    if(!gl)return;
+    var gl=cv.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,premultipliedAlpha:false,powerPreference:'high-performance'});if(!gl)return;
     ph.appendChild(cv);
+    var mob=window.innerWidth/window.innerHeight<.82,Z=mob?'m':'d',N=5;
+    // точка, куда ныряет камера: на обложке — чаша, дальше — центр сюжета кадра
+    var FOC=mob?[[.476,.245],[.5,.3],[.5,.36],[.5,.32],[.52,.42]]:[[.5,.235],[.5,.3],[.5,.33],[.55,.4],[.62,.45]];
 
     var VS='attribute vec2 aP;varying vec2 vUv;void main(){vUv=aP*.5+.5;gl_Position=vec4(aP,0.,1.);}';
     var FS=[
     'precision highp float;varying vec2 vUv;',
-    'uniform sampler2D uT,uG;uniform vec2 uRes,uImg,uBowl,uMouse;uniform float uTime,uDive,uMode,uLens,uDpr;uniform vec3 uRip[6];',
+    'uniform sampler2D uA,uGA,uB,uGB;uniform vec2 uRes,uImg,uFA,uFB;uniform float uTime,uMix,uDir,uHA,uHB,uKA,uKB;',
     'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
     'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}',
     'float fbm(vec2 p){return .55*n(p)+.3*n(p*2.03+7.)+.15*n(p*4.1+13.);}',
-    'vec3 tx(vec2 uv){return texture2D(uT,clamp(uv,.001,.999)).rgb;}',
-    'void main(){',
-    '  vec2 s=vec2(vUv.x,1.-vUv.y);vec2 P=s*uRes;float ca=.0009;float t=uTime;float rim=0.;float ws=0.;',
-    // линза: увеличение под курсором, радужная кайма по краю
-    '  if(uMode>.5&&uMode<1.5&&uLens>.001){vec2 m=P-uMouse;float R=190.*uDpr;float rr=length(m)/R;',
-    '    if(rr<1.){float w=uLens*(1.-rr*rr);P=uMouse+m*(1.-.34*w);ca+=.007*uLens*smoothstep(.45,1.,rr)*(1.-smoothstep(.96,1.,rr));}rim=uLens*smoothstep(.86,.985,rr)*(1.-smoothstep(.985,1.01,rr));}',
-    // волна: кольца от движения курсора
-    '  if(uMode>1.5&&uMode<2.5){for(int i=0;i<6;i++){vec3 R=uRip[i];float a=t-R.z;if(a>0.&&a<2.6){vec2 m=P-R.xy;float r=length(m)+.001;',
-    '    float fr=a*330.*uDpr;float env=exp(-pow((r-fr)/(120.*uDpr),2.))*exp(-a*1.1);float wv=sin((r-fr)*.05/uDpr)*env;',
-    '    P+=m/r*wv*24.*uDpr;ca+=abs(wv)*.008;ws+=cos((r-fr)*.05/uDpr)*env;}}}',
-    '  s=P/uRes;',
-    '  float ra=uRes.x/uRes.y,ia=uImg.x/uImg.y;vec2 k=ra>ia?vec2(1.,ia/ra):vec2(ra/ia,1.);vec2 uv=(s-.5)*k+.5;',
-    // медленный наезд к чаше, 26 с туда-обратно
-    '  float kb=1.025+.04*(.5-.5*cos(t*.2417));uv=uBowl+(uv-uBowl)/kb;',
-    // погружение: зум в чашу и бочка
-    '  float dv=uDive*uDive*(3.-2.*uDive);vec2 d=uv-uBowl;float r=length(d*vec2(ia,1.));',
-    '  uv=uBowl+d/(1.+dv*dv*9.)*(1.+dv*1.4*r);',
-    // жар: дрожание воздуха над чашей и вокруг неё, сильнее в режиме «Жар» и при погружении
-    '  vec2 hb=(uv-uBowl)*vec2(ia,1.);float hm=smoothstep(.3,.02,length(hb*vec2(1.3,1.)+vec2(0.,.12)))*smoothstep(-.02,-.09,uv.y-uBowl.y);',
-    '  vec2 qq=uv*vec2(30.,12.)+vec2(0.,t*1.6);vec2 hz=vec2(fbm(qq),fbm(qq+vec2(5.2,1.3)))-.5;',
-    '  uv+=hz*hm*((uMode<.5?.007:.0035)+dv*.03)+hz*dv*.012;',
-    '  vec2 cd=(uv-uBowl)*(ca+dv*.03);',
-    '  vec3 col=vec3(tx(uv-cd).r,tx(uv).g,tx(uv+cd).b);',
-    // свечение: размытая яркая часть кадра, дышит неровно, как огонь
-    '  vec3 g=texture2D(uG,clamp(uv,.001,.999)).rgb/2.2;',
+    'vec2 cov(vec2 s){float ra=uRes.x/uRes.y,ia=uImg.x/uImg.y;vec2 k=ra>ia?vec2(1.,ia/ra):vec2(ra/ia,1.);return (s-.5)*k+.5;}',
+    'vec3 tx(sampler2D T,vec2 uv){return texture2D(T,clamp(uv,.001,.999)).rgb;}',
+    'vec3 layer(sampler2D T,sampler2D G,vec2 s,vec2 F,float heat,float kb,float z,float w,float t){',
+    '  float ia=uImg.x/uImg.y;vec2 uv=cov(s);uv=F+(uv-F)/kb;',
+    '  vec2 d=uv-F;float r=length(d*vec2(ia,1.));uv=F+d/z*(1.+(z-1.)*.22*r);',
+    '  vec2 hb=(uv-F)*vec2(ia,1.);float hm=heat*smoothstep(.3,.02,length(hb*vec2(1.3,1.)+vec2(0.,.12)))*smoothstep(-.02,-.09,uv.y-F.y);',
+    '  vec2 q=uv*vec2(30.,12.)+vec2(0.,t*1.6);vec2 hz=vec2(fbm(q),fbm(q+vec2(5.2,1.3)))-.5;uv+=hz*(hm*.007+w*.011);',
+    '  vec2 cd=(uv-F)*(.0009+w*.005);',
+    '  vec3 c=vec3(tx(T,uv-cd).r,tx(T,uv).g,tx(T,uv+cd).b);',
     '  float br=.5+.18*sin(t*1.13)+.22*(n(vec2(t*2.7,1.))-.5)+.1*sin(t*.37);',
-    '  col+=g*(1.7*br+dv*5.);col+=rim*vec3(1.,.86,.7)*.09;col*=1.+ws*.38;',
-    '  col*=1.+.05*(n(vec2(t*7.,3.))-.5)*smoothstep(.25,.7,dot(col,vec3(.33)));',
-    // вспышка в конце погружения
-    '  col=mix(col,vec3(1.,.83,.62),smoothstep(.55,1.,dv)*.92*(1.-r*.6));',
-    '  float vg=smoothstep(1.3,.35,length((vec2(vUv.x,1.-vUv.y)-.5)*vec2(ra,1.)));col*=mix(1.,vg,.3);',
+    '  c+=tx(G,uv)/2.2*(1.7*br+w*1.6);',
+    '  c*=1.+.05*(n(vec2(t*7.,3.))-.5)*smoothstep(.25,.7,dot(c,vec3(.33)));return c;}',
+    'void main(){vec2 s=vec2(vUv.x,1.-vUv.y);float t=uTime,m=uMix,e=m*m*(3.-2.*m),w=sin(3.14159*m);',
+    // вперёд: старый кадр ныряет в фокус, новый выходит из глубины; назад — наоборот
+    '  float zA=uDir>0.?1.+e*e*3.2:1./(1.+e*.5);float zB=uDir>0.?.7+.3*e:1.+(1.-e)*(1.-e)*3.2;',
+    '  vec3 col=layer(uA,uGA,s,uFA,uHA,uKA,zA,w,t);',
+    '  if(m>0.){vec3 b=layer(uB,uGB,s,uFB,uHB,uKB,zB,w,t);',
+    // новый кадр проступает сначала через свет (лампы, колбы, блики), потом через тени
+    '    float lb=clamp(dot(b,vec3(.3,.59,.11))*1.6,0.,1.);float nz=fbm(s*vec2(uRes.x/uRes.y,1.)*1.3+vec2(0.,t*.1));',
+    '    float k=smoothstep(0.,.32,e*1.45-(1.-lb)*.85-nz*.25);col=mix(col,b,k)+vec3(1.,.8,.6)*w*w*.035;}',
+    '  float ra=uRes.x/uRes.y;float vg=smoothstep(1.3,.35,length((s-.5)*vec2(ra,1.)));col*=mix(1.,vg,.3);',
     '  gl_FragColor=vec4(col,1.);}'].join('\n');
 
     function sh(type,src){var o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){console.warn('cv-gl',gl.getShaderInfoLog(o));return null}return o}
     var vs=sh(gl.VERTEX_SHADER,VS),fs=sh(gl.FRAGMENT_SHADER,FS);if(!vs||!fs){cv.remove();return}
     var pr=gl.createProgram();gl.attachShader(pr,vs);gl.attachShader(pr,fs);gl.linkProgram(pr);if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){cv.remove();return}
     gl.useProgram(pr);
-    var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+    var bf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,bf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
     var aP=gl.getAttribLocation(pr,'aP');gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
-    var U={};['uT','uG','uRes','uImg','uBowl','uMouse','uTime','uDive','uMode','uLens','uDpr','uRip'].forEach(function(nm){U[nm]=gl.getUniformLocation(pr,nm)});
+    var U={};['uA','uGA','uB','uGB','uRes','uImg','uFA','uFB','uTime','uMix','uDir','uHA','uHB','uKA','uKB'].forEach(function(k){U[k]=gl.getUniformLocation(pr,k)});
+    gl.uniform1i(U.uA,0);gl.uniform1i(U.uGA,1);gl.uniform1i(U.uB,2);gl.uniform1i(U.uGB,3);
 
-    var mob=window.innerWidth/window.innerHeight<.82,BOWL=mob?[.476,.245]:[.5,.235];
+    function mk(img){var t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);return t}
+    var S=[];
+    function load(k,cb){var o=S[k]={ok:false},i=new Image();
+      i.onload=function(){o.tex=mk(i);o.w=i.naturalWidth;o.h=i.naturalHeight;var g=new Image();
+        g.onload=function(){o.glow=mk(g);o.ok=true;cb&&cb();kick()};g.onerror=function(){o.glow=o.tex;o.ok=true;cb&&cb();kick()};
+        g.src='assets/slides/s'+k+'-'+Z+'-glow.webp'};
+      i.src='assets/slides/s'+k+'-'+Z+'.webp'}
+    // сначала обложка, потом остальные по порядку
+    load(0,function(){ph.classList.add('gl');for(var k=1;k<N;k++)load(k)});
+
     var dpr=Math.min(window.devicePixelRatio||1,mob?1.5:1.25),W=0,H=0;
-    var tex=gl.createTexture(),img=new Image();
-    img.onload=function(){gl.bindTexture(gl.TEXTURE_2D,tex);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);
-      gl.uniform1i(U.uT,0);gl.uniform2f(U.uImg,img.naturalWidth,img.naturalHeight);gl.uniform2f(U.uBowl,BOWL[0],BOWL[1]);
-      ready=true;setFx(fx)};
-    img.src='assets/cover/cv-c-'+(mob?'m':'d')+'.webp';
-    var gtex=gl.createTexture(),gimg=new Image();
-    gimg.onload=function(){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,gtex);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,gimg);gl.uniform1i(U.uG,1);gl.activeTexture(gl.TEXTURE0);kick()};
-    gimg.src='assets/cover/cv-c-'+(mob?'m':'d')+'-glow.webp';
-
     function size(){var r=cv.getBoundingClientRect(),w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(w&&h&&(w!==W||h!==H)){W=cv.width=w;H=cv.height=h;gl.viewport(0,0,W,H);gl.uniform2f(U.uRes,W,H)}}
     window.addEventListener('resize',function(){size();kick()});
 
-    // курсор: линза плавно следует, волна рождает кольца
-    var mx=-9999,my=-9999,lx=-9999,ly=-9999,lens=0,lensT=0,lastMove=-9,rip=new Float32Array(18),ri=0,lastR={x:-9999,y:-9999,t:-9};
-    for(var i=0;i<6;i++)rip[i*3+2]=-99;
     var t0=performance.now();function now(){return (performance.now()-t0)/1000}
-    function onMove(e){if(window.scrollY>window.innerHeight)return;var r=cv.getBoundingClientRect();mx=(e.clientX-r.left)*dpr;my=(e.clientY-r.top)*dpr;lastMove=now();
-      if(lx<-999){lx=mx;ly=my}
-      if(fx==='wave'){var tt=now(),dd=Math.hypot(mx-lastR.x,my-lastR.y);if(dd>90*dpr&&tt-lastR.t>.14){rip[ri*3]=mx;rip[ri*3+1]=my;rip[ri*3+2]=tt;ri=(ri+1)%6;lastR={x:mx,y:my,t:tt}}}
-      kick()}
-    window.addEventListener('pointermove',onMove,{passive:true});
-    window.addEventListener('pointerdown',onMove,{passive:true});
-    document.addEventListener('pointerleave',function(){lastMove=-9},{passive:true});
-
-    // погружение: 0 → 1 за 0,8 с, ролик стартует на 55 %, затем кадр гаснет; вернулись на обложку — выныриваем
-    var dive=0,diveA=null,dived=false;
-    function anim(from,to,ms,ease,mid,cb){var s=performance.now(),fired=false;diveA={s:s,from:from,to:to,ms:ms,ease:ease,mid:mid,cb:cb,fired:false};kick()}
-    window.__cvDive=function(cb){if(!ready||fx==='none'||!sec.classList.contains('cv-show')){cb();return}anim(0,1,820,function(x){return x*x*x},.55,cb)};
-    new MutationObserver(function(){if(sec.classList.contains('cv-show')&&dived){dived=false;anim(.6,0,950,function(x){return 1-Math.pow(1-x,3)})}kick()}).observe(sec,{attributes:true,attributeFilter:['class']});
-
-    var vis=true;if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;kick()}).observe(sec);
+    var cur=0,tr=null,shown=[0,0,0,0,0],raf=0,vis=true;
+    function kb(k,t){return 1.025+.04*(.5-.5*Math.cos((t-shown[k])*.2417))}
+    window.__cvSet=function(k){cur=k;tr=null;shown[k]=now();kick()};
+    window.__cvGo=function(from,to,onMid,onEnd){
+      if(!S[to]||!S[to].ok||!S[cur]||!S[cur].ok){cur=to;shown[to]=now();onMid&&onMid();onEnd&&onEnd();kick();return}
+      if(tr)fin();
+      tr={to:to,dir:to>cur?1:-1,s:performance.now(),ms:950,onMid:onMid,onEnd:onEnd,mid:false};shown[to]=now();
+      // страховка: свернули вкладку посреди перехода — кадры не рисуются, но глава всё равно сменится
+      tr.guard=setTimeout(function(){if(tr&&tr.to===to)fin()},tr.ms+400);kick()};
+    function fin(){var x=tr;if(!x)return;clearTimeout(x.guard);cur=x.to;tr=null;if(!x.mid){x.mid=true;x.onMid&&x.onMid()}x.onEnd&&x.onEnd();kick()}
+    if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;kick()}).observe(sec);
     document.addEventListener('visibilitychange',function(){kick()});
-    function active(){return ready&&fx!=='none'&&vis&&!document.hidden&&(sec.classList.contains('cv-show')||diveA)}
-    function frame(){raf=0;if(!active())return;size();
-      var t=now();
-      if(diveA){var p=Math.min(1,(performance.now()-diveA.s)/diveA.ms);dive=diveA.from+(diveA.to-diveA.from)*diveA.ease(p);
-        if(diveA.cb&&!diveA.fired&&p>=diveA.mid){diveA.fired=true;diveA.cb()}
-        if(p>=1){if(diveA.to===1)dived=true;diveA=null}}
-      var want=(fx==='lens'&&t-lastMove<2.5&&mx>-999)?1:0;lens+=(want-lens)*.08;lx+=(mx-lx)*.16;ly+=(my-ly)*.16;
-      gl.uniform1f(U.uTime,t);gl.uniform1f(U.uDive,dive);gl.uniform1f(U.uMode,MODE[fx]||0);gl.uniform1f(U.uLens,lens);gl.uniform1f(U.uDpr,dpr);
-      gl.uniform2f(U.uMouse,lx,ly);gl.uniform3fv(U.uRip,rip);
+    function bind(u,unit,t){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t)}
+    function frame(){raf=0;if(!S[0]||!S[0].ok||!vis||document.hidden)return;size();
+      var t=now(),m=0,b=cur;
+      if(tr){var p=Math.min(1,(performance.now()-tr.s)/tr.ms);m=p;b=tr.to;
+        if(!tr.mid&&p>=.5){tr.mid=true;tr.onMid&&tr.onMid()}
+        if(p>=1){fin();m=0;b=cur}}
+      var A=S[cur]&&S[cur].ok?S[cur]:S[0],B=S[b]&&S[b].ok?S[b]:A;
+      bind(U.uA,0,A.tex);bind(U.uGA,1,A.glow);bind(U.uB,2,B.tex);bind(U.uGB,3,B.glow);
+      gl.uniform2f(U.uImg,A.w,A.h);gl.uniform2f(U.uFA,FOC[cur][0],FOC[cur][1]);gl.uniform2f(U.uFB,FOC[b][0],FOC[b][1]);
+      gl.uniform1f(U.uTime,t);gl.uniform1f(U.uMix,m);gl.uniform1f(U.uDir,tr?tr.dir:1);
+      gl.uniform1f(U.uHA,cur===0?1:0);gl.uniform1f(U.uHB,b===0?1:0);gl.uniform1f(U.uKA,kb(cur,t));gl.uniform1f(U.uKB,kb(b,t));
       gl.drawArrays(gl.TRIANGLES,0,3);
       raf=requestAnimationFrame(frame)}
-    kick=function(){if(!raf&&active())raf=requestAnimationFrame(frame)};
-    window.__cvShot=function(o){size();var m=MODE[o.fx||fx]||0;gl.uniform1f(U.uTime,o.t||3);gl.uniform1f(U.uDive,o.dive||0);gl.uniform1f(U.uMode,m);
-      gl.uniform1f(U.uLens,o.lens||0);gl.uniform1f(U.uDpr,dpr);gl.uniform2f(U.uMouse,(o.mx||0)*dpr,(o.my||0)*dpr);
-      var rr=new Float32Array(18);for(var i=0;i<6;i++)rr[i*3+2]=-99;(o.rip||[]).forEach(function(q,i){rr[i*3]=q[0]*dpr;rr[i*3+1]=q[1]*dpr;rr[i*3+2]=(o.t||3)-q[2]});
-      gl.uniform3fv(U.uRip,rr);gl.drawArrays(gl.TRIANGLES,0,3);return cv.toDataURL('image/jpeg',.82)};
+    function kick(){if(!raf)raf=requestAnimationFrame(frame)}
+    // отладка без видеокарты: один кадр с заданным состоянием → dataURL
+    window.__cvShot=function(o){var keep=tr;size();var f=o.from|0,tt=o.to==null?f:o.to;
+      bind(0,0,S[f].tex);bind(0,1,S[f].glow);bind(0,2,S[tt].tex);bind(0,3,S[tt].glow);
+      gl.uniform2f(U.uImg,S[f].w,S[f].h);gl.uniform2f(U.uFA,FOC[f][0],FOC[f][1]);gl.uniform2f(U.uFB,FOC[tt][0],FOC[tt][1]);
+      gl.uniform1f(U.uTime,o.t||3);gl.uniform1f(U.uMix,o.mix||0);gl.uniform1f(U.uDir,o.dir||1);gl.uniform1f(U.uHA,f===0?1:0);gl.uniform1f(U.uHB,tt===0?1:0);
+      gl.uniform1f(U.uKA,1.03);gl.uniform1f(U.uKB,1.03);gl.drawArrays(gl.TRIANGLES,0,3);return cv.toDataURL('image/jpeg',.82)};
     kick();
   })();
   </script>
@@ -2659,102 +2613,51 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       roll.appendChild(line)}
     sp.appendChild(roll)});
 
-  // 01 · Презентация (08.11.2026): экран закреплён, один жест — один отрезок настоящего видео до следующей остановки.
-  // Пока отрезок идёт, прокрутка и жесты заблокированы; заставка ждёт, пока видео загрузится целиком.
-  // Назад — наплывом на кадр остановки (видео в браузере назад плавно не играет). С последней главы — обычная прокрутка.
+  // 01 · Презентация (23.11.2026, было 08.11 на ролике): экран закреплён, один жест — одна глава.
+  // Кадры — фото съёмки клиента, смена — погружение в шейдере (__cvGo, ~0,95 с); без WebGL — наплыв кадров в #pv-still.
+  // Тачпад: новый жест (пауза или разгон) срабатывает сразу; при непрерывной прокрутке — следующая глава через 0,45 с после прошлой;
+  // затухающий хвост инерции не листает. С последней главы — обычная прокрутка.
   (function(){
     var sec=document.getElementById('top'),d=document.documentElement;
     if(!sec||!sec.classList.contains('pv'))return;
-    var v='promo';   // выбор Дмитрия 08.11.2026; «Замок» и «3D-арки» — dizajn/gen/out/film5-arhiv/
-    var sz=window.innerWidth/window.innerHeight<.82?'m':'d',base='assets/film5/'+v+'/';
-    var idle=document.getElementById('pv-idle'),film=document.getElementById('pv-film'),still=document.getElementById('pv-still'),dark=document.getElementById('film-dark'),hint=document.getElementById('pv-hint');
+    var sz=window.innerWidth/window.innerHeight<.82?'m':'d';
+    var still=document.getElementById('pv-still'),dark=document.getElementById('film-dark'),hint=document.getElementById('pv-hint');
     var chs=[].slice.call(sec.querySelectorAll('.pv-ch'));
-    var last=chs.length-1,c=0,busy=false,pres=false,ok=false,stops=[],idleP=null,DARK=[0,.74,.74,.6,.9],SMOKE=[1,.5,.5,.5,.3];
-    window.__pvPoster=base+'poster-'+sz+'.webp';still.src=window.__pvPoster;still.classList.add('is-on');
+    var last=chs.length-1,c=0,busy=false,pres=false,DARK=[0,.5,.5,.42,.62],SMOKE=[1,.5,.5,.5,.3];
+    function src(k){return 'assets/slides/s'+k+'-'+sz+'.webp'}
+    window.__pvPoster=src(0);still.src=src(0);still.classList.add('is-on');
     if(!d.classList.contains('film-on')){window.__pvP=1;return}
-    window.__pvP=0;
+    // заставка ждёт обложку и следующий кадр, остальные догружаются
+    window.__pvP=0;var got=0;
+    for(var i=0;i<=last;i++){var im=new Image();im.onload=im.onerror=function(){got++;window.__pvP=Math.min(1,got/2)};im.src=src(i)}
 
-    idle.src=base+'idle-'+sz+'.mp4';
-    idle.addEventListener('playing',function(){idle.classList.add('is-on');still.classList.remove('is-on')},{once:true});
-    function pl(x){var p=x.play();if(p&&p.catch)p.catch(function(){})}
-    pl(idle);
-
-    function stillSrc(k){return base+'stop-'+sz+'-'+k+'.webp'}
-    function loadBlob(url,est){return fetch(url).then(function(r){if(!r.ok)throw new Error('http '+r.status);
-      var total=+r.headers.get('content-length')||est||0;if(!r.body||!total)return r.blob();
-      var rd=r.body.getReader(),got=0,parts=[];
-      return (function pump(){return rd.read().then(function(s){if(s.done)return new Blob(parts,{type:'video/mp4'});parts.push(s.value);got+=s.value.length;window.__pvP=Math.min(.97,got/total);return pump()})})()})}
-    fetch(base+'film.json').then(function(r){return r.json()}).then(function(m){stops=m[sz].stops;idleP=m.idle||null;
-      return loadBlob(base+'film-'+sz+'.mp4',m[sz].size)}).then(function(b){
-      for(var i=0;i<=last;i++){var im=new Image();im.src=stillSrc(i)}
-      film.src=URL.createObjectURL(b);film.load();
-      film.addEventListener('loadeddata',function(){ok=true;window.__pvP=1},{once:true});
-      film.addEventListener('error',function(){window.__pvP=1},{once:true})
-    }).catch(function(){window.__pvP=1});
-
-    // обложка на фото: видна только на главе 0; ролик при уходе с неё стартует с 1,9 с — после сгенерированного плана в нише
-    var PH0=1.9,sw=document.getElementById('cv-sw');
-    function phOn(){return sec.dataset.cv&&sec.dataset.cv!=='0'}
-    function ph0(on){sec.classList.toggle('cv-show',on);if(sw)sw.classList.toggle('is-off',!on)}
     function lock(on){pres=on;d.classList.toggle('pres',on)}
     function mark(n){chs.forEach(function(ch,k){var o=k===n;ch.classList.toggle('is-on',o);ch.inert=!o});if(hint)hint.classList.toggle('is-on',n===0)}
     function shade(n){dark.style.opacity=DARK[n];window.__pvA=SMOKE[n]}
-    function done(n,wait){c=n;setTimeout(function(){busy=false},wait==null?240:wait)}
-    function showStill(n,cb){var im=new Image(),go=function(){still.src=im.src;still.classList.add('is-on');
-      if(n===0){try{idle.currentTime=0}catch(e){}idle.classList.add('is-on');pl(idle);film.classList.remove('is-on');setTimeout(function(){still.classList.remove('is-on')},460)}cb&&cb()};im.onload=go;im.onerror=go;im.src=stillSrc(n)}
-
-    // проигрывание участка ролика до остановки; любой новый жест может его прервать
-    var cancelRun=null;
-    function run(from,to,onNear,onDone,onStart,fast){
-      var fin=false,raf=0,guard=0,near=false;
-      function stop(){fin=true;film.playbackRate=1;cancelAnimationFrame(raf);clearTimeout(guard);film.removeEventListener('timeupdate',check);film.removeEventListener('seeked',start);cancelRun=null}
-      function arrive(){if(fin)return;stop();film.pause();try{film.currentTime=to}catch(e){}if(!near){near=true;onNear&&onNear()}onDone&&onDone()}
-      function check(){var t=film.currentTime;if(fast&&t>=fast){fast=0;film.playbackRate=1}if(!near&&t>=to-.55){near=true;onNear&&onNear()}if(t>=to-.035||film.ended)arrive()}
-      function loop(){if(fin)return;check();raf=requestAnimationFrame(loop)}
-      function start(){if(fin)return;film.classList.add('is-on');still.classList.remove('is-on');onStart&&onStart();film.playbackRate=fast?1.8:1;pl(film);film.addEventListener('timeupdate',check);raf=requestAnimationFrame(loop);guard=setTimeout(arrive,(to-from)*1000+2500)}
-      cancelRun=function(){if(!fin){stop();film.pause()}};
-      if(Math.abs(film.currentTime-from)<.06)start();else{film.addEventListener('seeked',start,{once:true});film.currentTime=from}
-    }
-    // текущий кадр мгновенно закрывает видео, пока оно перематывается, затем растворяется в движении
-    function cover(k,cb){var im=new Image(),go=function(){still.style.transition='none';still.src=im.src;still.classList.add('is-on');void still.offsetWidth;still.style.transition='';cb()};im.onload=go;im.onerror=go;im.src=stillSrc(k)}
-
-    function forward(n){
-      var from=c,to=stops[n],need=stops[from];
-      // петля — это первый план ролика, идущий туда и обратно: стартуем с того же кадра, поэтому склейки не видно
-      var photo=from===0&&phOn();
-      if(photo)need=PH0;
-      else if(from===0&&idleP&&idle.classList.contains('is-on')&&!still.classList.contains('is-on')){var per=idle.duration||idleP.period,ph=(idle.currentTime%per)/per;need=(1-Math.cos(2*Math.PI*ph))/2*idleP.src}
-      mark(-1);
-      function go2(){run(need,to,function(){mark(n);shade(n)},function(){done(n)},from===0?function(){ph0(false);setTimeout(function(){idle.classList.remove('is-on');idle.pause()},450)}:null,from===0&&idleP&&!photo?idleP.src:0)}
-      if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else if(photo&&window.__cvDive)window.__cvDive(go2);else go2();
-    }
-    // назад: фон тоже движется — наплыв на живой план слайда, который доигрывает до своей остановки
-    var BACK=1.25;
-    function back(n){var to=stops[n];mark(-1);cover(c,function(){run(Math.max(0,to-BACK),to,function(){mark(n);shade(n)},function(){done(n)})})}
-    // назад на обложку: наплыв сразу на идущую петлю, с участка, где камера уже в движении
-    function toCover(){mark(-1);cover(c,function(){ph0(true);film.classList.remove('is-on');try{idle.currentTime=(idle.duration||8)*.25}catch(e){}idle.classList.add('is-on');pl(idle);
-      setTimeout(function(){still.classList.remove('is-on');mark(0);shade(0);done(0,520)},140)})}
-    function byStill(n){mark(-1);ph0(n===0);setTimeout(function(){showStill(n,function(){if(n>0)idle.classList.remove('is-on');mark(n);shade(n);done(n,520)})},260)}
-    // вернулись к обложке прокруткой снизу: текущий план оживает, текст остаётся на месте
-    function replay(){if(!ok||!stops.length||c===0||busy)return;if(cancelRun)cancelRun();var to=stops[c];cover(c,function(){run(Math.max(0,to-BACK),to)})}
-
+    var armT=0;
+    function show(from,n,cb){
+      var mid=function(){mark(n);shade(n)};
+      if(window.__cvGo){window.__cvGo(from,n,mid,cb);return}
+      still.classList.remove('is-on');
+      setTimeout(function(){var im=new Image(),go=function(){still.src=im.src;still.classList.add('is-on');mid();setTimeout(cb,420)};im.onload=go;im.onerror=go;im.src=src(n)},300)}
     function go(n){
-      if(busy||n<0)return;
+      if(busy||n<0||n===c)return;
       if(n>last){leaveDown();return}
-      busy=true;if(cancelRun)cancelRun();
-      if(ok&&stops.length){if(n>c)forward(n);else if(n===0)toCover();else back(n)}else byStill(n);
-    }
-    function leaveDown(){busy=true;if(cancelRun)cancelRun();lock(false);window.scrollTo({top:sec.offsetHeight,behavior:'smooth'});setTimeout(function(){busy=false},1000)}
-    function jump0(){window.scrollTo(0,0);lock(true);if(c!==0&&!busy){busy=true;if(cancelRun)cancelRun();if(ok&&stops.length)toCover();else byStill(0)}}
+      busy=true;var from=c;mark(-1);
+      show(from,n,function(){c=n;busy=false;armT=performance.now()+120})}
+    function leaveDown(){busy=true;lock(false);window.scrollTo({top:sec.offsetHeight,behavior:'smooth'});setTimeout(function(){busy=false},1000)}
+    function jump0(){window.scrollTo(0,0);lock(true);if(c!==0&&!busy)go(0)}
 
-    // начальное состояние: восстановленная прокрутка или якорь — без блокировки, плёнка стоит на финале
-    if(window.scrollY>10||location.hash){c=last;mark(last);shade(last);ph0(false);still.src=stillSrc(last);still.classList.add('is-on')}else{lock(true);mark(0);shade(0);ph0(true)}
+    // начальное состояние: восстановленная прокрутка или якорь — без блокировки, на финальной главе
+    if(window.scrollY>10||location.hash){c=last;mark(last);shade(last);still.src=src(last);if(window.__cvSet)window.__cvSet(last)}else{lock(true);mark(0);shade(0)}
 
     function blocked(){return !pres||d.classList.contains('is-loading')||document.querySelector('.pop.is-open,.sheet.is-open')}
     var lastT=0,lastD=0;
     window.addEventListener('wheel',function(e){if(blocked())return;e.preventDefault();
-      var t=performance.now(),dy=e.deltaY*(e.deltaMode===1?16:1),gap=t-lastT,fresh=gap>130||(Math.abs(dy)>Math.abs(lastD)*1.6&&Math.abs(dy)>36);
-      lastT=t;lastD=dy;if(busy||!fresh||Math.abs(dy)<5)return;go(c+(dy>0?1:-1))},{passive:false});
+      var t=performance.now(),dy=e.deltaY*(e.deltaMode===1?16:1),ady=Math.abs(dy),gap=t-lastT,acc=ady>Math.abs(lastD)*1.3+2;
+      lastT=t;lastD=dy;
+      if(busy||t<armT||ady<4)return;
+      if(gap>90||acc||(t-armT>450&&ady>=24))go(c+(dy>0?1:-1))},{passive:false});
     var ty=0,tOn=false;
     window.addEventListener('touchstart',function(e){if(e.touches.length===1){ty=e.touches[0].clientY;tOn=true}},{passive:true});
     window.addEventListener('touchmove',function(e){if(!blocked()&&e.cancelable)e.preventDefault()},{passive:false});
@@ -2766,8 +2669,8 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#"]');if(!a)return;var id=a.getAttribute('href').slice(1);if(!id){e.preventDefault();return}
       if(id==='top'){e.preventDefault();jump0();return}if(pres&&document.getElementById(id))lock(false)},true);
     // вернулись к самому верху — снова презентация, на той главе, где закончили
-    var armed=window.scrollY>innerHeight*.9,away=window.scrollY>80;
-    window.addEventListener('scroll',function(){var y=window.scrollY;if(y>80)away=true;if(y>innerHeight*.9)armed=true;else if(armed&&!pres&&y<innerHeight*.7){armed=false;replay()}
+    var away=window.scrollY>80;
+    window.addEventListener('scroll',function(){var y=window.scrollY;if(y>80)away=true;
       // блокируем снова, только если человек уходил вниз и вернулся: первое событие плавной прокрутки к якорю приходит ещё наверху
       if(!pres&&!busy&&away&&y<=1&&!d.classList.contains('is-loading')){away=false;lock(true)}},{passive:true});
     window.__pvLeave=function(){if(pres)lock(false)};
@@ -3164,7 +3067,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
         if(media)media.style.transform='scale('+(.8+.2*ez).toFixed(4)+')';
         if(el<PRE*.55+DIVE)requestAnimationFrame(f);else{if(media)media.style.transform='';ld.classList.add('is-gone');document.dispatchEvent(new Event('mc:loaded'))}}
       requestAnimationFrame(f)}
-    var im=new Image();im.onload=im.onerror=function(){ready++};im.src=window.__pvPoster||'assets/film5/promo/poster-d.webp';
+    var im=new Image();im.onload=im.onerror=function(){ready++};im.src=window.__pvPoster||'assets/slides/s0-d.webp';
     (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){ready++});
     requestAnimationFrame(tick);
   })();
