@@ -1390,6 +1390,9 @@ html.film-on .pv .film-stick{position:relative;height:100%}
 .cv-sw span{padding:0 8px 0 6px}
 .cv-sw button{all:unset;cursor:pointer;padding:8px 10px;color:#F2E9DE}
 .cv-sw button[aria-pressed="true"]{background:#F2E9DE;color:#14110F}
+.cv-gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 500ms ease}
+.cv-ph.gl .cv-gl{opacity:1}
+.cv-ph.gl .cv-ph-k{visibility:hidden;transition:visibility 0s 520ms}
 .cv-sw{transition:opacity 400ms ease}
 .cv-sw.is-off{opacity:0;pointer-events:none}
 .pv .film-dark{background:radial-gradient(85% 75% at 50% 50%,rgba(14,11,9,.8) 0%,rgba(14,11,9,.58) 100%);transition:opacity 700ms var(--soft)}
@@ -1994,15 +1997,15 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 <main>
   <!-- 01 · Презентация (08.11.2026): экран закреплён, один жест — один отрезок видео до следующей остановки; пока отрезок идёт, прокрутка заблокирована.
        Прежняя плёнка на кадрах — index.src.v54_2026-11-08.html -->
-  <section class="hero film pv cv-show" id="top" data-cv="a" data-n="01" data-name="Презентация" aria-labelledby="hero-title">
+  <section class="hero film pv cv-show" id="top" data-cv="c" data-fx="heat" data-n="01" data-name="Презентация" aria-labelledby="hero-title">
     <div class="film-stick">
       <div class="film-media" aria-hidden="true">
         <video class="pv-v" id="pv-idle" muted loop playsinline preload="auto"></video>
         <video class="pv-v" id="pv-film" muted playsinline preload="auto"></video>
         <img class="pv-v" id="pv-still" alt="">
         <div class="cv-ph" id="cv-ph" aria-hidden="true"><div class="cv-ph-k">
-          <picture><source media="(max-aspect-ratio: 41/50)" srcset="assets/cover/cv-a-m.webp"><img src="assets/cover/cv-a-d.webp" alt="" decoding="async" fetchpriority="high"></picture>
-          <picture class="cv-ph-b"><source media="(max-aspect-ratio: 41/50)" srcset="assets/cover/cv-a-m.webp"><img src="assets/cover/cv-a-d.webp" alt="" decoding="async"></picture>
+          <picture><source media="(max-aspect-ratio: 41/50)" srcset="assets/cover/cv-c-m.webp"><img src="assets/cover/cv-c-d.webp" alt="" decoding="async" fetchpriority="high"></picture>
+          <picture class="cv-ph-b"><source media="(max-aspect-ratio: 41/50)" srcset="assets/cover/cv-c-m.webp"><img src="assets/cover/cv-c-d.webp" alt="" decoding="async"></picture>
         </div></div>
       </div>
       <div class="film-shade" aria-hidden="true"></div>
@@ -2054,19 +2057,135 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
   </section>
 
 
-  <!-- Временный переключатель обложки (23.11.2026): A — колбы, B — мастер у полки, C — кальян под лампами, «Было» — прежний ролик -->
-  <div class="cv-sw" id="cv-sw" role="group" aria-label="Вариант обложки"><span>Обложка</span><button type="button" data-cv="a">A · Колбы</button><button type="button" data-cv="b">B · Мастер</button><button type="button" data-cv="c">C · Кальян</button><button type="button" data-cv="0">Было</button></div>
+  <!-- Временный переключатель эффекта обложки (23.11.2026): «Жар», «Линза», «Волна», «Без эффекта». Убрать после выбора -->
+  <div class="cv-sw" id="cv-sw" role="group" aria-label="Эффект обложки"><span>Эффект</span><button type="button" data-fx="heat">Жар</button><button type="button" data-fx="lens">Линза</button><button type="button" data-fx="wave">Волна</button><button type="button" data-fx="none">Без эффекта</button></div>
   <script>
+  // 01 · Обложка C (23.11.2026): кадр съёмки клиента «кальян под лампами» в шейдере WebGL.
+  // Жар — воздух дрожит над раскалённой чашей; Линза — курсор как стекло колбы; Волна — курсор пускает рябь.
+  // Во всех режимах первый жест вниз — погружение: камера ныряет в свет чаши и выходит в ролик (window.__cvDive).
+  // Без WebGL и при «уменьшить движение» остаётся статичный кадр с CSS-свечением.
   (function(){
-    var sec=document.getElementById('top'),sw=document.getElementById('cv-sw');if(!sec||!sw)return;
-    var imgs=sec.querySelectorAll('.cv-ph picture');
-    function set(v){sec.dataset.cv=v;
-      if(v!=='0')[].forEach.call(imgs,function(p){p.querySelector('source').srcset='assets/cover/cv-'+v+'-m.webp';p.querySelector('img').src='assets/cover/cv-'+v+'-d.webp'});
-      [].forEach.call(sw.querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',b.dataset.cv===v?'true':'false')});
-      try{localStorage.setItem('mc-cv',v)}catch(e){}}
-    var q=(location.search.match(/[?&]cv=([abc0])/)||[])[1],s=null;try{s=localStorage.getItem('mc-cv')}catch(e){}
-    set(q||(/^[abc0]$/.test(s||'')?s:'a'));
-    sw.addEventListener('click',function(e){var b=e.target.closest('button');if(b)set(b.dataset.cv)});
+    var sec=document.getElementById('top'),ph=document.getElementById('cv-ph'),sw=document.getElementById('cv-sw');if(!sec||!ph||!sw)return;
+    var fx='heat',MODE={heat:0,lens:1,wave:2};
+    function setFx(v){fx=v;sec.dataset.fx=v;ph.classList.toggle('gl',ready&&v!=='none');
+      [].forEach.call(sw.querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',b.dataset.fx===v?'true':'false')});
+      try{localStorage.setItem('mc-fx',v)}catch(e){}kick()}
+    sw.addEventListener('click',function(e){var b=e.target.closest('button');if(b)setFx(b.dataset.fx)});
+
+    var ready=false,raf=0,kick=function(){};
+    var q=(location.search.match(/[?&]fx=(heat|lens|wave|none)/)||[])[1],st=null;try{st=localStorage.getItem('mc-fx')}catch(e){}
+    var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cv=document.createElement('canvas');cv.className='cv-gl';cv.setAttribute('aria-hidden','true');
+    var gl=rm?null:cv.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,premultipliedAlpha:false,powerPreference:'high-performance'});
+    setFx(q||(/^(heat|lens|wave|none)$/.test(st||'')?st:'heat'));
+    if(!gl)return;
+    ph.appendChild(cv);
+
+    var VS='attribute vec2 aP;varying vec2 vUv;void main(){vUv=aP*.5+.5;gl_Position=vec4(aP,0.,1.);}';
+    var FS=[
+    'precision highp float;varying vec2 vUv;',
+    'uniform sampler2D uT,uG;uniform vec2 uRes,uImg,uBowl,uMouse;uniform float uTime,uDive,uMode,uLens,uDpr;uniform vec3 uRip[6];',
+    'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
+    'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}',
+    'float fbm(vec2 p){return .55*n(p)+.3*n(p*2.03+7.)+.15*n(p*4.1+13.);}',
+    'vec3 tx(vec2 uv){return texture2D(uT,clamp(uv,.001,.999)).rgb;}',
+    'void main(){',
+    '  vec2 s=vec2(vUv.x,1.-vUv.y);vec2 P=s*uRes;float ca=.0009;float t=uTime;float rim=0.;float ws=0.;',
+    // линза: увеличение под курсором, радужная кайма по краю
+    '  if(uMode>.5&&uMode<1.5&&uLens>.001){vec2 m=P-uMouse;float R=190.*uDpr;float rr=length(m)/R;',
+    '    if(rr<1.){float w=uLens*(1.-rr*rr);P=uMouse+m*(1.-.34*w);ca+=.007*uLens*smoothstep(.45,1.,rr)*(1.-smoothstep(.96,1.,rr));}rim=uLens*smoothstep(.86,.985,rr)*(1.-smoothstep(.985,1.01,rr));}',
+    // волна: кольца от движения курсора
+    '  if(uMode>1.5&&uMode<2.5){for(int i=0;i<6;i++){vec3 R=uRip[i];float a=t-R.z;if(a>0.&&a<2.6){vec2 m=P-R.xy;float r=length(m)+.001;',
+    '    float fr=a*330.*uDpr;float env=exp(-pow((r-fr)/(120.*uDpr),2.))*exp(-a*1.1);float wv=sin((r-fr)*.05/uDpr)*env;',
+    '    P+=m/r*wv*24.*uDpr;ca+=abs(wv)*.008;ws+=cos((r-fr)*.05/uDpr)*env;}}}',
+    '  s=P/uRes;',
+    '  float ra=uRes.x/uRes.y,ia=uImg.x/uImg.y;vec2 k=ra>ia?vec2(1.,ia/ra):vec2(ra/ia,1.);vec2 uv=(s-.5)*k+.5;',
+    // медленный наезд к чаше, 26 с туда-обратно
+    '  float kb=1.025+.04*(.5-.5*cos(t*.2417));uv=uBowl+(uv-uBowl)/kb;',
+    // погружение: зум в чашу и бочка
+    '  float dv=uDive*uDive*(3.-2.*uDive);vec2 d=uv-uBowl;float r=length(d*vec2(ia,1.));',
+    '  uv=uBowl+d/(1.+dv*dv*9.)*(1.+dv*1.4*r);',
+    // жар: дрожание воздуха над чашей и вокруг неё, сильнее в режиме «Жар» и при погружении
+    '  vec2 hb=(uv-uBowl)*vec2(ia,1.);float hm=smoothstep(.3,.02,length(hb*vec2(1.3,1.)+vec2(0.,.12)))*smoothstep(-.02,-.09,uv.y-uBowl.y);',
+    '  vec2 qq=uv*vec2(30.,12.)+vec2(0.,t*1.6);vec2 hz=vec2(fbm(qq),fbm(qq+vec2(5.2,1.3)))-.5;',
+    '  uv+=hz*hm*((uMode<.5?.007:.0035)+dv*.03)+hz*dv*.012;',
+    '  vec2 cd=(uv-uBowl)*(ca+dv*.03);',
+    '  vec3 col=vec3(tx(uv-cd).r,tx(uv).g,tx(uv+cd).b);',
+    // свечение: размытая яркая часть кадра, дышит неровно, как огонь
+    '  vec3 g=texture2D(uG,clamp(uv,.001,.999)).rgb/2.2;',
+    '  float br=.5+.18*sin(t*1.13)+.22*(n(vec2(t*2.7,1.))-.5)+.1*sin(t*.37);',
+    '  col+=g*(1.7*br+dv*5.);col+=rim*vec3(1.,.86,.7)*.09;col*=1.+ws*.38;',
+    '  col*=1.+.05*(n(vec2(t*7.,3.))-.5)*smoothstep(.25,.7,dot(col,vec3(.33)));',
+    // вспышка в конце погружения
+    '  col=mix(col,vec3(1.,.83,.62),smoothstep(.55,1.,dv)*.92*(1.-r*.6));',
+    '  float vg=smoothstep(1.3,.35,length((vec2(vUv.x,1.-vUv.y)-.5)*vec2(ra,1.)));col*=mix(1.,vg,.3);',
+    '  gl_FragColor=vec4(col,1.);}'].join('\n');
+
+    function sh(type,src){var o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){console.warn('cv-gl',gl.getShaderInfoLog(o));return null}return o}
+    var vs=sh(gl.VERTEX_SHADER,VS),fs=sh(gl.FRAGMENT_SHADER,FS);if(!vs||!fs){cv.remove();return}
+    var pr=gl.createProgram();gl.attachShader(pr,vs);gl.attachShader(pr,fs);gl.linkProgram(pr);if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){cv.remove();return}
+    gl.useProgram(pr);
+    var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+    var aP=gl.getAttribLocation(pr,'aP');gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+    var U={};['uT','uG','uRes','uImg','uBowl','uMouse','uTime','uDive','uMode','uLens','uDpr','uRip'].forEach(function(nm){U[nm]=gl.getUniformLocation(pr,nm)});
+
+    var mob=window.innerWidth/window.innerHeight<.82,BOWL=mob?[.476,.245]:[.5,.235];
+    var dpr=Math.min(window.devicePixelRatio||1,mob?1.5:1.25),W=0,H=0;
+    var tex=gl.createTexture(),img=new Image();
+    img.onload=function(){gl.bindTexture(gl.TEXTURE_2D,tex);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);
+      gl.uniform1i(U.uT,0);gl.uniform2f(U.uImg,img.naturalWidth,img.naturalHeight);gl.uniform2f(U.uBowl,BOWL[0],BOWL[1]);
+      ready=true;setFx(fx)};
+    img.src='assets/cover/cv-c-'+(mob?'m':'d')+'.webp';
+    var gtex=gl.createTexture(),gimg=new Image();
+    gimg.onload=function(){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,gtex);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,gimg);gl.uniform1i(U.uG,1);gl.activeTexture(gl.TEXTURE0);kick()};
+    gimg.src='assets/cover/cv-c-'+(mob?'m':'d')+'-glow.webp';
+
+    function size(){var r=cv.getBoundingClientRect(),w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(w&&h&&(w!==W||h!==H)){W=cv.width=w;H=cv.height=h;gl.viewport(0,0,W,H);gl.uniform2f(U.uRes,W,H)}}
+    window.addEventListener('resize',function(){size();kick()});
+
+    // курсор: линза плавно следует, волна рождает кольца
+    var mx=-9999,my=-9999,lx=-9999,ly=-9999,lens=0,lensT=0,lastMove=-9,rip=new Float32Array(18),ri=0,lastR={x:-9999,y:-9999,t:-9};
+    for(var i=0;i<6;i++)rip[i*3+2]=-99;
+    var t0=performance.now();function now(){return (performance.now()-t0)/1000}
+    function onMove(e){if(window.scrollY>window.innerHeight)return;var r=cv.getBoundingClientRect();mx=(e.clientX-r.left)*dpr;my=(e.clientY-r.top)*dpr;lastMove=now();
+      if(lx<-999){lx=mx;ly=my}
+      if(fx==='wave'){var tt=now(),dd=Math.hypot(mx-lastR.x,my-lastR.y);if(dd>90*dpr&&tt-lastR.t>.14){rip[ri*3]=mx;rip[ri*3+1]=my;rip[ri*3+2]=tt;ri=(ri+1)%6;lastR={x:mx,y:my,t:tt}}}
+      kick()}
+    window.addEventListener('pointermove',onMove,{passive:true});
+    window.addEventListener('pointerdown',onMove,{passive:true});
+    document.addEventListener('pointerleave',function(){lastMove=-9},{passive:true});
+
+    // погружение: 0 → 1 за 0,8 с, ролик стартует на 55 %, затем кадр гаснет; вернулись на обложку — выныриваем
+    var dive=0,diveA=null,dived=false;
+    function anim(from,to,ms,ease,mid,cb){var s=performance.now(),fired=false;diveA={s:s,from:from,to:to,ms:ms,ease:ease,mid:mid,cb:cb,fired:false};kick()}
+    window.__cvDive=function(cb){if(!ready||fx==='none'||!sec.classList.contains('cv-show')){cb();return}anim(0,1,820,function(x){return x*x*x},.55,cb)};
+    new MutationObserver(function(){if(sec.classList.contains('cv-show')&&dived){dived=false;anim(.6,0,950,function(x){return 1-Math.pow(1-x,3)})}kick()}).observe(sec,{attributes:true,attributeFilter:['class']});
+
+    var vis=true;if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;kick()}).observe(sec);
+    document.addEventListener('visibilitychange',function(){kick()});
+    function active(){return ready&&fx!=='none'&&vis&&!document.hidden&&(sec.classList.contains('cv-show')||diveA)}
+    function frame(){raf=0;if(!active())return;size();
+      var t=now();
+      if(diveA){var p=Math.min(1,(performance.now()-diveA.s)/diveA.ms);dive=diveA.from+(diveA.to-diveA.from)*diveA.ease(p);
+        if(diveA.cb&&!diveA.fired&&p>=diveA.mid){diveA.fired=true;diveA.cb()}
+        if(p>=1){if(diveA.to===1)dived=true;diveA=null}}
+      var want=(fx==='lens'&&t-lastMove<2.5&&mx>-999)?1:0;lens+=(want-lens)*.08;lx+=(mx-lx)*.16;ly+=(my-ly)*.16;
+      gl.uniform1f(U.uTime,t);gl.uniform1f(U.uDive,dive);gl.uniform1f(U.uMode,MODE[fx]||0);gl.uniform1f(U.uLens,lens);gl.uniform1f(U.uDpr,dpr);
+      gl.uniform2f(U.uMouse,lx,ly);gl.uniform3fv(U.uRip,rip);
+      gl.drawArrays(gl.TRIANGLES,0,3);
+      raf=requestAnimationFrame(frame)}
+    kick=function(){if(!raf&&active())raf=requestAnimationFrame(frame)};
+    window.__cvShot=function(o){size();var m=MODE[o.fx||fx]||0;gl.uniform1f(U.uTime,o.t||3);gl.uniform1f(U.uDive,o.dive||0);gl.uniform1f(U.uMode,m);
+      gl.uniform1f(U.uLens,o.lens||0);gl.uniform1f(U.uDpr,dpr);gl.uniform2f(U.uMouse,(o.mx||0)*dpr,(o.my||0)*dpr);
+      var rr=new Float32Array(18);for(var i=0;i<6;i++)rr[i*3+2]=-99;(o.rip||[]).forEach(function(q,i){rr[i*3]=q[0]*dpr;rr[i*3+1]=q[1]*dpr;rr[i*3+2]=(o.t||3)-q[2]});
+      gl.uniform3fv(U.uRip,rr);gl.drawArrays(gl.TRIANGLES,0,3);return cv.toDataURL('image/jpeg',.82)};
+    kick();
   })();
   </script>
 
@@ -2607,7 +2726,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       else if(from===0&&idleP&&idle.classList.contains('is-on')&&!still.classList.contains('is-on')){var per=idle.duration||idleP.period,ph=(idle.currentTime%per)/per;need=(1-Math.cos(2*Math.PI*ph))/2*idleP.src}
       mark(-1);
       function go2(){run(need,to,function(){mark(n);shade(n)},function(){done(n)},from===0?function(){ph0(false);setTimeout(function(){idle.classList.remove('is-on');idle.pause()},450)}:null,from===0&&idleP&&!photo?idleP.src:0)}
-      if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else go2();
+      if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else if(photo&&window.__cvDive)window.__cvDive(go2);else go2();
     }
     // назад: фон тоже движется — наплыв на живой план слайда, который доигрывает до своей остановки
     var BACK=1.25;

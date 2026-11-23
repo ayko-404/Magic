@@ -1388,6 +1388,9 @@ html.film-on .pv .film-stick{position:relative;height:100%}
 .cv-sw span{padding:0 8px 0 6px}
 .cv-sw button{all:unset;cursor:pointer;padding:8px 10px;color:#F2E9DE}
 .cv-sw button[aria-pressed="true"]{background:#F2E9DE;color:#14110F}
+.cv-gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 500ms ease}
+.cv-ph.gl .cv-gl{opacity:1}
+.cv-ph.gl .cv-ph-k{visibility:hidden;transition:visibility 0s 520ms}
 .cv-sw{transition:opacity 400ms ease}
 .cv-sw.is-off{opacity:0;pointer-events:none}
 .pv .film-dark{background:radial-gradient(85% 75% at 50% 50%,rgba(14,11,9,.8) 0%,rgba(14,11,9,.58) 100%);transition:opacity 700ms var(--soft)}
@@ -2374,7 +2377,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       else if(from===0&&idleP&&idle.classList.contains('is-on')&&!still.classList.contains('is-on')){var per=idle.duration||idleP.period,ph=(idle.currentTime%per)/per;need=(1-Math.cos(2*Math.PI*ph))/2*idleP.src}
       mark(-1);
       function go2(){run(need,to,function(){mark(n);shade(n)},function(){done(n)},from===0?function(){ph0(false);setTimeout(function(){idle.classList.remove('is-on');idle.pause()},450)}:null,from===0&&idleP&&!photo?idleP.src:0)}
-      if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else go2();
+      if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else if(photo&&window.__cvDive)window.__cvDive(go2);else go2();
     }
     // назад: фон тоже движется — наплыв на живой план слайда, который доигрывает до своей остановки
     var BACK=1.25;
