@@ -2573,7 +2573,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     function scene(){
       var box=document.getElementById('sc-in'),L=null,rise=0,els={},base={},curBase=null,D='assets/sc/',parX=0,parY=0;
       var EV={'День рождения':'birthday','Свадьба':'wedding','Корпоратив':'corporate','Закрытая вечеринка':'private'};
-      var OPT={'Брендированная стойка':'op_stand','Оформление зоны':'op_zone','Авторское меню':'op_menu','Особый дресс-код мастеров':'op_dress'};
+      var OPT={'Брендированная стойка':'op_stand','Оформление зоны':'op_zone','Меню под событие':'op_menu','Особый дресс-код мастеров':'op_dress'};
       var FOCUS={bowl:'b0',menu:null,guest:'op_guest'},zoomT=0;
       function kind(s){return s.bowl==='APEX'?'A':(s.menu==='Фруктовые'?'F':'K')}
       function want(s){var a=['ev_'+EV[s.format],s.mode==='Часть программы'?'h0s':'h0'],i,k=kind(s);
@@ -2581,7 +2581,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
         for(i=1;i<s.k;i++)a.push('h'+i);
         for(i=0;i<s.k;i++)a.push('b'+i+k);
         if(s.mode==='В разговоре')a.push('md_talk');
-        if(s.menu==='Авторские')a.push('mn_author');if(s.menu==='Фруктовые')a.push('mn_fruit');if(s.menu!=='Классика'||s.opts.indexOf('Авторское меню')>=0)a.push('mn_table');
+        if(s.menu==='Авторские')a.push('mn_author');if(s.menu==='Фруктовые')a.push('mn_fruit');if(s.menu!=='Классика'||s.opts.indexOf('Меню под событие')>=0)a.push('mn_table');
         s.opts.forEach(function(o){if(OPT[o])a.push(OPT[o])});if(s.guest)a.push('op_guest');
         return a.filter(function(n){return L[n]})}
       function el(n){var e=els[n];if(e)return e;var q=L[n];e=new Image();e.alt='';e.decoding='async';e.className='sc-l'+(/^(b\d+[KF]|ev_birthday)$/.test(n)?' sc-live':'')+(/^(op_zone|ev_wedding)$/.test(n)?' sc-drop':'');e.style.cssText='left:'+q[0]+'%;top:'+q[1]+'%;width:'+q[2]+'%;height:'+q[3]+'%;z-index:'+q[4]+';--d:'+((L[n.replace(/^b(\d+)[KFA]$/,'h$1')]||q)[4]/Object.keys(L).length).toFixed(2);e.src=D+n+'.webp';box.appendChild(e);els[n]=e;return e}
