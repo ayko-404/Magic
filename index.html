@@ -3260,4 +3260,31 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       function step(t){raf2=requestAnimationFrame(step);if(t-lt<33)return;var d=Math.min(.06,(t-lt)/1000);lt=t;x.clearRect(0,0,W2,H2);x.globalCompositeOperation='lighter';P.forEach(function(p){p.l+=d;p.y-=p.v*d;p.a+=p.w*d;p.x+=Math.sin(p.a)*18*d;var k=p.l/p.m;if(k>=1||p.y<-10){spawn(p);return}x.globalAlpha=Math.min(1,k*7)*(1-k)*(.65+.35*Math.sin(p.a*5));x.drawImage(hot,p.x-p.s/2,p.y-p.s/2,p.s,p.s)})}
       fit2();var cnt=W2<700?18:42;for(var i=0;i<cnt;i++)P.push(spawn({},true));window.addEventListener('resize',fit2,{passive:true});onSight(ft,function(v){if(v&&!on){on=true;lt=performance.now();raf2=requestAnimationFrame(step)}else if(!v&&on){on=false;cancelAnimationFrame(raf2)}})}
   })();
+  // Плавная прокрутка колесом (23.11.2026): на Mac и Windows колесо мыши листает рывками по 100 px — здесь страница доезжает
+  // с мягким догоном, как на сайтах с Lenis. Не трогает: первый экран-презентацию (html.pres), загрузку, открытые окна,
+  // блоки, которые сами держат колесо (конверт), зум с Ctrl, горизонтальные жесты и прокручиваемые элементы внутри страницы.
+  // Если страницу прокрутил кто-то другой (якорь, скрипт), догон останавливается и подхватывает новое место.
+  (function(){
+    var d=document.documentElement;
+    if(!window.matchMedia||matchMedia('(prefers-reduced-motion: reduce)').matches||!matchMedia('(pointer:fine)').matches)return;
+    var tgt=0,cur=0,raf=0,setY=0,lt=0,LERP=.11;
+    function maxY(){return Math.max(0,d.scrollHeight-window.innerHeight)}
+    function inner(el,dy){for(;el&&el.nodeType===1&&el!==document.body&&el!==d;el=el.parentElement){var o=getComputedStyle(el).overflowY;
+      if((o==='auto'||o==='scroll')&&el.scrollHeight>el.clientHeight+1&&(dy>0?el.scrollTop+el.clientHeight<el.scrollHeight-1:el.scrollTop>0))return true}return false}
+    function stop(){if(raf)cancelAnimationFrame(raf);raf=0}
+    function step(t){raf=0;var dt=Math.min(64,t-(lt||t-16.7));lt=t;
+      if(Math.abs(window.scrollY-setY)>3||d.classList.contains('pres')){tgt=cur=window.scrollY;return}
+      cur+=(tgt-cur)*(1-Math.pow(1-LERP,dt/16.7));if(Math.abs(tgt-cur)<.4)cur=tgt;
+      window.scrollTo({top:cur,behavior:'instant'});setY=window.scrollY;
+      if(cur!==tgt)raf=requestAnimationFrame(step)}
+    window.addEventListener('wheel',function(e){
+      if(e.defaultPrevented||e.ctrlKey||d.classList.contains('pres')||d.classList.contains('is-loading')||document.querySelector('.pop.is-open,.sheet.is-open'))return;
+      var dy=e.deltaY*(e.deltaMode===1?40:e.deltaMode===2?window.innerHeight:1);
+      if(!dy||Math.abs(e.deltaX)>Math.abs(dy)||inner(e.target,dy))return;
+      e.preventDefault();
+      if(!raf){tgt=cur=setY=window.scrollY;lt=0}
+      tgt=Math.max(0,Math.min(maxY(),tgt+dy));
+      if(!raf)raf=requestAnimationFrame(step)},{passive:false});
+    window.addEventListener('resize',function(){tgt=Math.min(tgt,maxY())},{passive:true});
+  })();
 </script>
