@@ -1973,12 +1973,12 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 @media (max-width:980px){.ag-rows li{padding-right:84px;align-content:start;min-height:0}.ag-ill{right:0;width:66px}}
 @media (prefers-reduced-motion:reduce){.ag-ill path,.ag-ill circle,.ag-ill .r{stroke-dashoffset:0;transition:none}.ag-ill.is-in .ai-o,.ag-ill.is-in .r,.ag-ill.is-in .ai-c,.ag-ill.is-in .ai-m,.ag-ill.is-in .ai-g,.ag-ill.is-in .ai-p{animation:none}}
 /* 23.11.2026: неон как у кальяна на главной — без арки и лучей; зажигается с мерцанием, изредка моргает */
-.ag-rows .ag-ill{width:clamp(46px,3.8vw,60px);stroke:#FFD2B0;stroke-width:1.5;filter:drop-shadow(0 0 1.5px rgba(255,160,100,.95)) drop-shadow(0 0 8px rgba(255,112,64,.6));opacity:0}
-.ag-rows .ag-ill .ai-c,.ag-rows .ag-ill .ai-m,.ag-rows .ag-ill .ai-g{stroke:#FF9A70}
-.ag-rows .ag-ill path,.ag-rows .ag-ill circle{stroke-dashoffset:0;transition:none}
-.ag-rows .ag-ill.is-in{animation:kvNeon 1000ms linear calc(var(--s) * 170ms + 100ms) both,kvHum 6s ease-in-out calc(var(--s) * 700ms + 1200ms) infinite}
-@media (max-width:980px){.ag-rows .ag-ill{width:46px}}
-@media (prefers-reduced-motion:reduce){.ag-rows .ag-ill,.ag-rows .ag-ill.is-in{animation:none;opacity:1}}
+.agn .ag-ill{width:clamp(46px,3.8vw,60px);stroke:#FFD2B0;stroke-width:1.5;filter:drop-shadow(0 0 1.5px rgba(255,160,100,.95)) drop-shadow(0 0 8px rgba(255,112,64,.6));opacity:0}
+.agn .ag-ill .ai-c,.agn .ag-ill .ai-m,.agn .ag-ill .ai-g{stroke:#FF9A70}
+.agn .ag-ill path,.agn .ag-ill circle{stroke-dashoffset:0;transition:none}
+.agn .ag-ill.is-in{animation:kvNeon 1000ms linear calc(var(--s) * 170ms + 100ms) both,kvHum 6s ease-in-out calc(var(--s) * 700ms + 1200ms) infinite}
+@media (max-width:980px){.agn .ag-ill{width:46px}}
+@media (prefers-reduced-motion:reduce){.agn .ag-ill,.agn .ag-ill.is-in{animation:none;opacity:1}}
 
 .ag-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));background:var(--coffee)}
 .ag-split figure{position:relative;margin:0;overflow:hidden}
@@ -2016,7 +2016,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 .ag-two .label{font-size:14px;letter-spacing:.3em;background:none;color:#C9BDAE;-webkit-text-fill-color:#C9BDAE;animation:none}
 
 /* Блок «Форматы и опции»: три арки с фото и опции с иллюстрациями (выбор Дмитрия 10.11.2026) */
-.afm .ag-ill{position:static;translate:none;right:auto;top:auto;width:clamp(84px,7.6vw,118px)}
+.afm .ag-ill{position:static;translate:none;right:auto;top:auto;width:clamp(56px,5vw,78px)}
 .fm-ops{list-style:none;margin:clamp(48px,5vw,76px) 0 0;padding:0 var(--gr) 0 var(--g1);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(18px,2vw,32px)}
 .fm-ops li{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;font-size:clamp(15px,1.25vw,18px);line-height:1.25;color:#F1E8DC}
 .fm-arch{overflow-x:clip}
@@ -2038,7 +2038,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
   .fma-r{left:-34px;right:-34px;top:-34px}
   .fm-ops{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 14px;padding-inline:var(--gut) var(--gut-r)}
   .fm-ops li:last-child{grid-column:1/-1}
-  .afm .ag-ill{width:96px}
+  .afm .ag-ill{width:64px}
 }
 @media (prefers-reduced-motion:reduce){.fma-r::before{animation:none}}
 @media (max-width:980px){
@@ -2119,7 +2119,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       <h2 class="b3-h b4-h" id="off-title" data-b3-in><span class="ln"><span>Договор, смета,</span></span><span class="ln ln-2"><span>документы</span></span></h2>
       <p class="lead" data-b3-in>Показываем процесс заранее: что подписываем, как считаем<br class="br-d"> и что вы получаете после мероприятия.</p>
     </div>
-    <ul class="ag-rows">
+    <ul class="ag-rows agn">
       <li data-b3-in><svg class="ag-ill" style="--tilt:6deg;--s:0" viewBox="24 58 72 80" fill="none" aria-hidden="true"><g class="ai-o"><path pathLength="1" d="M42 64H72L80 72V128H42Z"/><path pathLength="1" d="M72 64V72H80"/><path pathLength="1" d="M49 82H73"/><path pathLength="1" d="M49 90H73"/><path pathLength="1" d="M49 98H66"/><path class="ai-c" pathLength="1" d="M49 117C53 108 56 108 57 114C58 120 61 111 64 113C67 115 69 117 74 113"/></g></svg><h3>Договор</h3><p>Работаем по договору с агентством.</p></li>
       <li data-b3-in><svg class="ag-ill" style="--tilt:-5deg;--s:1" viewBox="24 58 72 80" fill="none" aria-hidden="true"><g class="ai-o"><path pathLength="1" d="M43 64H77V124L71.3 120L65.7 124L60 120L54.3 124L48.7 120L43 124Z"/><path pathLength="1" d="M50 76H62M68 76H70"/><path pathLength="1" d="M50 85H62M68 85H70"/><path pathLength="1" d="M50 94H62M68 94H70"/><path pathLength="1" d="M50 102H70"/><path class="ai-c" pathLength="1" d="M50 111H58M63 111H70"/></g></svg><h3>Понятная смета</h3><p>Каждая позиция расписана под ваш бриф.</p></li>
       <li data-b3-in><svg class="ag-ill" style="--tilt:5deg;--s:2" viewBox="24 58 72 80" fill="none" aria-hidden="true"><g class="ai-o"><circle pathLength="1" cx="60" cy="100" r="27"/><path pathLength="1" d="M60 77V81"/><path pathLength="1" d="M83 100H79"/><path pathLength="1" d="M60 123V119"/><path pathLength="1" d="M37 100H41"/><path pathLength="1" d="M42 121L37 131"/><path pathLength="1" d="M78 121L83 131"/><path class="ai-m" pathLength="1" d="M60 100V84"/><path class="ai-g" pathLength="1" d="M60 100H71"/></g></svg><h3>Согласованные условия</h3><p>Тайминг, площадку и состав команды фиксируем до выезда.</p></li>
@@ -2148,7 +2148,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       <p class="lead" data-b3-in>Всё собираем под конкретный бриф.</p>
     </div>
     <!-- Форматы и опции: три арки (выбор Дмитрия 10.11.2026). Прежняя вёрстка и другие варианты — agentstvam.src.v91_2026-11-10.html -->
-    <div class="afm fm-arch"><ul class="fma"><li><figure><i class="fma-r"></i><span class="fma-ph"><img src="assets/f-fmt-corp.webp" alt="Гости в банкетном зале" loading="lazy"></span><figcaption>Корпоративы</figcaption></figure></li><li><figure><i class="fma-r"></i><span class="fma-ph"><img src="assets/f-fmt-wed.webp" alt="Кальян среди цветов" loading="lazy"></span><figcaption>Свадьбы</figcaption></figure></li><li><figure><i class="fma-r"></i><span class="fma-ph"><img src="assets/f-fmt-priv.webp" alt="Гости вечером в лаунже" loading="lazy"></span><figcaption>Закрытые вечера</figcaption></figure></li></ul><ul class="fm-ops"><li><svg class="ag-ill" data-ill="stand" style="--tilt:6deg;--s:0" viewBox="0 0 120 140" fill="none" aria-hidden="true"></svg><span>Брендированная стойка</span></li><li><svg class="ag-ill" data-ill="dress" style="--tilt:-5deg;--s:1" viewBox="0 0 120 140" fill="none" aria-hidden="true"></svg><span>Дресс-код</span></li><li><svg class="ag-ill" data-ill="menu" style="--tilt:5deg;--s:2" viewBox="0 0 120 140" fill="none" aria-hidden="true"></svg><span>Персональное меню</span></li><li><svg class="ag-ill" data-ill="star" style="--tilt:-6deg;--s:3" viewBox="0 0 120 140" fill="none" aria-hidden="true"></svg><span>Медийные мастера</span></li><li><svg class="ag-ill" data-ill="apex" style="--tilt:4deg;--s:4" viewBox="0 0 120 140" fill="none" aria-hidden="true"></svg><span>Электронные чаши APEX</span></li></ul></div>
+    <div class="afm fm-arch agn"><ul class="fma"><li><figure><i class="fma-r"></i><span class="fma-ph"><img src="assets/f-fmt-corp.webp" alt="Гости в банкетном зале" loading="lazy"></span><figcaption>Корпоративы</figcaption></figure></li><li><figure><i class="fma-r"></i><span class="fma-ph"><img src="assets/f-fmt-wed.webp" alt="Кальян среди цветов" loading="lazy"></span><figcaption>Свадьбы</figcaption></figure></li><li><figure><i class="fma-r"></i><span class="fma-ph"><img src="assets/f-fmt-priv.webp" alt="Гости вечером в лаунже" loading="lazy"></span><figcaption>Закрытые вечера</figcaption></figure></li></ul><ul class="fm-ops"><li><svg class="ag-ill" data-ill="stand" style="--tilt:6deg;--s:0" viewBox="20 52 80 86" fill="none" aria-hidden="true"></svg><span>Брендированная стойка</span></li><li><svg class="ag-ill" data-ill="dress" style="--tilt:-5deg;--s:1" viewBox="20 52 80 86" fill="none" aria-hidden="true"></svg><span>Дресс-код</span></li><li><svg class="ag-ill" data-ill="menu" style="--tilt:5deg;--s:2" viewBox="20 52 80 86" fill="none" aria-hidden="true"></svg><span>Персональное меню</span></li><li><svg class="ag-ill" data-ill="star" style="--tilt:-6deg;--s:3" viewBox="20 52 80 86" fill="none" aria-hidden="true"></svg><span>Медийные мастера</span></li><li><svg class="ag-ill" data-ill="apex" style="--tilt:4deg;--s:4" viewBox="20 52 80 86" fill="none" aria-hidden="true"></svg><span>Электронные чаши APEX</span></li></ul></div>
     <div class="ag-price" data-b3-in>
       <div><b>Смета от 30&nbsp;000&nbsp;₽</b><span class="t">Минимальный заказ: 3 кальяна на 3 часа.</span></div>
       <button class="btn btn-solid" type="button" data-pop="agent"><span>Запросить смету</span><i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></button>
@@ -2261,7 +2261,6 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 <script>
 (function(){
   var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function R(){var o='',a,i;for(i=0;i<11;i++){a=(-155+i*13)*Math.PI/180;o+='<path class="r" style="--i:'+i+'" pathLength="1" d="M'+(60+Math.cos(a)*14).toFixed(1)+' '+(54+Math.sin(a)*14).toFixed(1)+'L'+(60+Math.cos(a)*24).toFixed(1)+' '+(54+Math.sin(a)*24).toFixed(1)+'"/>'}return o+'<path class="r" style="--i:12" pathLength="1" d="M49.4 51.2A11 11 0 0 1 70.6 51.2"/>'}
   function P(d,c){return '<path'+(c?' class="'+c+'"':'')+' pathLength="1" d="'+d+'"/>'}
   var star=(function(){var d='',i,a,r;for(i=0;i<10;i++){a=-Math.PI/2+i*Math.PI/5;r=i%2?10.5:25;d+=(i?'L':'M')+(60+Math.cos(a)*r).toFixed(1)+' '+(97+Math.sin(a)*r).toFixed(1)}return d+'Z'})();
   var ILL={
@@ -2271,7 +2270,8 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     star:P(star,'ai-c')+P('M31 76L37 81M89 76L83 81M29 116L36 112M91 116L84 112M60 128V133'),
     apex:P('M47 68Q47 64 51 64H69Q73 64 73 68V103H47Z')+P('M54 74H66V93H54Z')+P('M61.5 76.5L56.5 84H61L58.5 90.5','ai-c')+P('M34 109H86')+P('M34 109Q60 118 86 109')+P('M57 103V109M63 103V109')+P('M58 115V134M62 115V134')
   };
-  function FR(n){return P('M8 134H112')+P('M16 134V62A44 44 0 0 1 104 62V134')+'<g class="ai-o">'+R()+ILL[n]+'</g>'}
+  // 23.11.2026: неон без арки и лучей, как у кальяна на главной
+  function FR(n){return '<g class="ai-o">'+ILL[n]+'</g>'}
   [].forEach.call(document.querySelectorAll('[data-ill]'),function(v){v.innerHTML=FR(v.getAttribute('data-ill'))});
 })();
 </script>
