@@ -1641,28 +1641,21 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
   .sv-how .kak{padding:0 var(--gut-r) 0 var(--gut)}
   .sv-how .kak .b4-t{white-space:normal}
 }
-/* «Как организуем»: иллюстрации над каждым шагом (23.11.2026) — телефон с перепиской, смета с подписью, кальян с углями.
-   Появляются вместе со своей точкой, затем живут: «печатает…», ручка ставит подпись и штамп, угли тлеют, вьётся струйка.
-   Три варианта подачи через data-ill на #kv-box: a — штрих, b — латунь (гравюра с бликом), c — неон. Переключатель временный */
-.kv-ill{position:absolute;left:0;bottom:calc(100% + 4px);width:clamp(160px,13vw,196px);height:auto;overflow:visible;pointer-events:none;stroke-linecap:round;stroke-linejoin:round;color:var(--sand)}
-.kv-ill path,.kv-ill circle{stroke:currentColor;stroke-width:1.1;vector-effect:non-scaling-stroke}
-.kv-ill .d{stroke-width:.8;opacity:.72}
-.kv-ill .h{display:none}
-.kv-ill .a{stroke:#DE9470}
-.kv-ill .dt{fill:currentColor;stroke:none}
+/* «Как организуем»: неоновый кальян над шагом 3 (23.11.2026). Зажигается с мерцанием вместе со своей точкой,
+   затем живёт: угли тлеют, вьётся струйка, кальян покачивается, в колбе пузырьки, изредка трубка коротко моргает */
+.kv-ill{position:absolute;left:0;bottom:calc(100% - 38px);width:clamp(176px,14.2vw,204px);height:auto;overflow:visible;pointer-events:none;stroke-linecap:round;stroke-linejoin:round;color:#FFD2B0;filter:drop-shadow(0 0 1.5px rgba(255,160,100,.95)) drop-shadow(0 0 8px rgba(255,112,64,.6))}
+.kv-ill path,.kv-ill circle{stroke:currentColor;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.kv-ill .d{stroke-width:1.1;opacity:.85}
+.kv-ill .a{stroke:#FF9A70}
 .kv-ill .gl{fill:url(#kvCoal);stroke:none}
-.kv-ill .sig{stroke-dasharray:1}
-.kv-ill .sm{stroke-width:.8}
 .kv-defs{position:absolute;width:0;height:0;overflow:hidden}
 .ki{transform-origin:120px 272px;transform:translate(-14px,0) rotate(7deg)}
 .ki-ho{transform-origin:123px 170px}
 .ki-w{transform-origin:120px 240px;transform:rotate(-7deg)}
-.ki-b{opacity:0;stroke-width:1}
-@media (min-width:981px){.sv-how,.b4 .sv-how{margin-top:clamp(70px,7vw,100px)}.sv-how .kv-head{margin-bottom:calc(clamp(160px,13vw,196px) * 1.1667 + 30px)}}
-/* появление: штрих рисуется вместе с точкой шага, живые части включаются следом */
-.kv-go .kv-ill path:not(.sig){stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 820ms var(--ease-io) calc(var(--k) * var(--t) + 40ms)}
-.kv-go .kv-ill .lp path:not(.sig){stroke-dasharray:none;stroke-dashoffset:0;transition:none}
-.kv-go.is-in .kv-ill path:not(.sig){stroke-dashoffset:0}
+.ki-b{opacity:0}
+@media (min-width:981px){.sv-how,.b4 .sv-how{margin-top:clamp(150px,13vw,190px)}}
+.kv-go .kv-ill{opacity:0}
+.kv-go.is-in .kv-ill{animation:kvNeon 1000ms linear calc(var(--k) * var(--t) + 40ms) both,kvHum 6s ease-in-out calc(var(--k) * var(--t) + 1100ms) infinite}
 .kv-ill .lp{opacity:0;transition:opacity 500ms ease}
 .kv-go.is-in .kv-ill .lp{opacity:1;transition-delay:calc(var(--k) * var(--t) + 650ms)}
 .kv-go.is-in .ki{animation:kiSway 5.8s ease-in-out calc(var(--k) * var(--t) + 900ms) infinite}
@@ -1673,31 +1666,10 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 @keyframes kiHose{0%,100%{transform:rotate(0)}50%{transform:rotate(5deg)}}
 @keyframes kiWater{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(-4deg) translateY(.8px)}}
 @keyframes kiBub{0%{transform:translateY(0);opacity:0}18%{opacity:.9}100%{transform:translateY(-20px);opacity:0}}
-/* B · латунь: металл с бегущим бликом и штриховкой гравюры */
-.kv-box[data-ill="b"] .kv-ill path,.kv-box[data-ill="b"] .kv-ill circle:not(.dt):not(.gl){stroke:url(#kvBrass);stroke-width:1.3}
-.kv-box[data-ill="b"] .kv-ill .d{stroke-width:.9;opacity:.85}
-.kv-box[data-ill="b"] .kv-ill .h{display:inline;stroke-width:.6;opacity:.8}
-.kv-box[data-ill="b"] .kv-ill .dt{fill:url(#kvBrass)}
-.kv-box[data-ill="b"] .kv-ill .f{stroke-width:1}
-/* C · неон: светящиеся трубки, зажигаются с мерцанием */
-.kv-box[data-ill="c"] .kv-ill{color:#FFD2B0;filter:drop-shadow(0 0 1.5px rgba(255,160,100,.95)) drop-shadow(0 0 8px rgba(255,112,64,.6))}
-.kv-box[data-ill="c"] .kv-ill path,.kv-box[data-ill="c"] .kv-ill circle:not(.dt):not(.gl){stroke-width:1.5}
-.kv-box[data-ill="c"] .kv-ill .d{opacity:.85;stroke-width:1.1}
-.kv-box[data-ill="c"] .kv-ill .f{opacity:.5}
-.kv-box[data-ill="c"] .kv-ill .a{stroke:#FF9A70}
-.kv-box[data-ill="c"].kv-go .kv-ill path:not(.sig){stroke-dashoffset:0;transition:none}
-.kv-box[data-ill="c"].kv-go .kv-ill{opacity:0}
-.kv-box[data-ill="c"].kv-go.is-in .kv-ill{animation:kvNeon 1000ms linear calc(var(--k) * var(--t) + 40ms) both,kvHum 6s ease-in-out calc(var(--k) * var(--t) + 1100ms) infinite}
 @keyframes kvNeon{0%{opacity:0}8%{opacity:.85}12%{opacity:.08}20%{opacity:.9}24%{opacity:.2}36%{opacity:1}40%{opacity:.45}46%,100%{opacity:1}}
 @keyframes kvHum{0%,100%{opacity:1}47%{opacity:1}48%{opacity:.78}49%{opacity:1}}
-/* переключатель вариантов — временный */
-.kv-sw{position:fixed;left:50%;bottom:14px;translate:-50% 0;z-index:90;display:flex;gap:4px;align-items:center;padding:5px;border:1px solid rgba(242,233,222,.18);background:rgba(20,17,15,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:500 11px/1 Onest,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#A99D8F;opacity:0;pointer-events:none;transition:opacity 300ms ease}
-.kv-sw.is-on{opacity:1;pointer-events:auto}
-.kv-sw span{padding:0 8px 0 6px}
-.kv-sw button{all:unset;cursor:pointer;padding:8px 10px;color:#F2E9DE}
-.kv-sw button[aria-pressed="true"]{background:#F2E9DE;color:#14110F}
 @media (max-width:980px){.kv-ill{position:static;display:block;order:9;width:128px;margin:6px 0 0}}
-@media (prefers-reduced-motion:reduce){.kv-go .kv-ill path:not(.sig){stroke-dashoffset:0;transition:none}.kv-go .kv-ill .lp{opacity:1;transition:none}.kv-go.is-in .ki,.kv-go.is-in .ki-ho,.kv-go.is-in .ki-w,.kv-go.is-in .ki-b,.kv-box[data-ill="c"].kv-go.is-in .kv-ill{animation:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.kv-go .kv-ill .lp{opacity:1;transition:none}.kv-go.is-in .ki,.kv-go.is-in .ki-ho,.kv-go.is-in .ki-w,.kv-go.is-in .ki-b,.kv-go.is-in .kv-ill{animation:none;opacity:1}}
 /* Окно мастера (09.11.2026) */
 .tc[data-master]{cursor:pointer}
 .tc-name{display:flex;justify-content:space-between;align-items:center;gap:16px}
@@ -2675,17 +2647,6 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     var io=new IntersectionObserver(function(en){if(!en[0].isIntersecting)return;io.disconnect();box.classList.add('is-in')},{threshold:.35});io.observe(box);
   })();
 
-  // Временный переключатель иллюстраций «Как организуем» (23.11.2026): виден, пока блок на экране; смена варианта проигрывает появление заново
-  (function(){
-    var box=document.getElementById('kv-box'),sw=document.getElementById('kv-sw');if(!box||!sw)return;
-    function set(v,replay){box.dataset.ill=v;[].forEach.call(sw.querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',b.dataset.ill===v?'true':'false')});
-      try{localStorage.setItem('mc-ill',v)}catch(e){}
-      if(replay&&box.classList.contains('is-in')){box.classList.remove('is-in');void box.offsetWidth;box.classList.add('is-in')}}
-    var q=(location.search.match(/[?&]ill=([abc])/)||[])[1],st=null;try{st=localStorage.getItem('mc-ill')}catch(e){}
-    set(q||(/^[abc]$/.test(st||'')?st:'a'));
-    sw.addEventListener('click',function(e){var b=e.target.closest('button');if(b)set(b.dataset.ill,true)});
-    if('IntersectionObserver' in window)new IntersectionObserver(function(en){sw.classList.toggle('is-on',en[0].isIntersecting)},{threshold:.2}).observe(box);
-  })();
 
   // Карточки мастеров: нажатие открывает окно с информацией о мастере. Данные — заготовка до материалов клиента, список в README
   (function(){
