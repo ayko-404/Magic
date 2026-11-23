@@ -1371,6 +1371,25 @@ html.film-on .pv .film-stick{position:relative;height:100%}
 .pv .film-media::after{background:rgba(9,7,5,.1)}
 .pv-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 420ms linear}
 .pv-v.is-on{opacity:1}
+/* 01 · Обложка на кадре со съёмки клиента (23.11.2026) вместо сгенерированного плана. Свечение — размытая копия кадра
+   в режиме «экран»: светлеют только источники света, чёрное остаётся чёрным; дышит неровно, как живой огонь */
+.cv-ph{position:absolute;inset:0;opacity:0;transition:opacity 480ms cubic-bezier(.2,.7,.2,1);pointer-events:none;overflow:hidden;background:#0d0b09}
+.pv.cv-show:not([data-cv="0"]) .cv-ph{opacity:1}
+.cv-ph-k{position:absolute;inset:0;animation:cvkb 26s ease-in-out infinite alternate}
+.cv-ph picture{position:absolute;inset:0;display:block}
+.cv-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cv-ph-b{mix-blend-mode:screen;animation:cvbreath 5.6s ease-in-out infinite}
+.cv-ph-b img{filter:blur(26px) saturate(1.5) brightness(1.2)}
+@keyframes cvkb{from{transform:scale(1.02)}to{transform:scale(1.09) translate3d(0,-1.2%,0)}}
+@keyframes cvbreath{0%,100%{opacity:.2}34%{opacity:.48}40%{opacity:.36}47%{opacity:.56}70%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.cv-ph-k,.cv-ph-b{animation:none}.cv-ph-b{opacity:.3}}
+/* переключатель вариантов обложки — временный, убрать после выбора */
+.cv-sw{position:fixed;left:50%;bottom:14px;translate:-50% 0;z-index:90;display:flex;gap:4px;align-items:center;padding:5px;border:1px solid rgba(242,233,222,.18);background:rgba(20,17,15,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:500 11px/1 Onest,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#A99D8F}
+.cv-sw span{padding:0 8px 0 6px}
+.cv-sw button{all:unset;cursor:pointer;padding:8px 10px;color:#F2E9DE}
+.cv-sw button[aria-pressed="true"]{background:#F2E9DE;color:#14110F}
+.cv-sw{transition:opacity 400ms ease}
+.cv-sw.is-off{opacity:0;pointer-events:none}
 .pv .film-dark{background:radial-gradient(85% 75% at 50% 50%,rgba(14,11,9,.8) 0%,rgba(14,11,9,.58) 100%);transition:opacity 700ms var(--soft)}
 .pv-ch{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 340ms ease,visibility 0s linear 340ms}
 .pv-ch.is-on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 500ms ease,visibility 0s}
@@ -2321,6 +2340,10 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       film.addEventListener('error',function(){window.__pvP=1},{once:true})
     }).catch(function(){window.__pvP=1});
 
+    // обложка на фото: видна только на главе 0; ролик при уходе с неё стартует с 1,9 с — после сгенерированного плана в нише
+    var PH0=1.9,sw=document.getElementById('cv-sw');
+    function phOn(){return sec.dataset.cv&&sec.dataset.cv!=='0'}
+    function ph0(on){sec.classList.toggle('cv-show',on);if(sw)sw.classList.toggle('is-off',!on)}
     function lock(on){pres=on;d.classList.toggle('pres',on)}
     function mark(n){chs.forEach(function(ch,k){var o=k===n;ch.classList.toggle('is-on',o);ch.inert=!o});if(hint)hint.classList.toggle('is-on',n===0)}
     function shade(n){dark.style.opacity=DARK[n];window.__pvA=SMOKE[n]}
@@ -2346,18 +2369,20 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     function forward(n){
       var from=c,to=stops[n],need=stops[from];
       // петля — это первый план ролика, идущий туда и обратно: стартуем с того же кадра, поэтому склейки не видно
-      if(from===0&&idleP&&idle.classList.contains('is-on')&&!still.classList.contains('is-on')){var per=idle.duration||idleP.period,ph=(idle.currentTime%per)/per;need=(1-Math.cos(2*Math.PI*ph))/2*idleP.src}
+      var photo=from===0&&phOn();
+      if(photo)need=PH0;
+      else if(from===0&&idleP&&idle.classList.contains('is-on')&&!still.classList.contains('is-on')){var per=idle.duration||idleP.period,ph=(idle.currentTime%per)/per;need=(1-Math.cos(2*Math.PI*ph))/2*idleP.src}
       mark(-1);
-      function go2(){run(need,to,function(){mark(n);shade(n)},function(){done(n)},from===0?function(){setTimeout(function(){idle.classList.remove('is-on');idle.pause()},450)}:null,from===0&&idleP?idleP.src:0)}
+      function go2(){run(need,to,function(){mark(n);shade(n)},function(){done(n)},from===0?function(){ph0(false);setTimeout(function(){idle.classList.remove('is-on');idle.pause()},450)}:null,from===0&&idleP&&!photo?idleP.src:0)}
       if(from>0&&Math.abs(film.currentTime-need)>.06)cover(from,go2);else go2();
     }
     // назад: фон тоже движется — наплыв на живой план слайда, который доигрывает до своей остановки
     var BACK=1.25;
     function back(n){var to=stops[n];mark(-1);cover(c,function(){run(Math.max(0,to-BACK),to,function(){mark(n);shade(n)},function(){done(n)})})}
     // назад на обложку: наплыв сразу на идущую петлю, с участка, где камера уже в движении
-    function toCover(){mark(-1);cover(c,function(){film.classList.remove('is-on');try{idle.currentTime=(idle.duration||8)*.25}catch(e){}idle.classList.add('is-on');pl(idle);
+    function toCover(){mark(-1);cover(c,function(){ph0(true);film.classList.remove('is-on');try{idle.currentTime=(idle.duration||8)*.25}catch(e){}idle.classList.add('is-on');pl(idle);
       setTimeout(function(){still.classList.remove('is-on');mark(0);shade(0);done(0,520)},140)})}
-    function byStill(n){mark(-1);setTimeout(function(){showStill(n,function(){if(n>0)idle.classList.remove('is-on');mark(n);shade(n);done(n,520)})},260)}
+    function byStill(n){mark(-1);ph0(n===0);setTimeout(function(){showStill(n,function(){if(n>0)idle.classList.remove('is-on');mark(n);shade(n);done(n,520)})},260)}
     // вернулись к обложке прокруткой снизу: текущий план оживает, текст остаётся на месте
     function replay(){if(!ok||!stops.length||c===0||busy)return;if(cancelRun)cancelRun();var to=stops[c];cover(c,function(){run(Math.max(0,to-BACK),to)})}
 
@@ -2371,7 +2396,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     function jump0(){window.scrollTo(0,0);lock(true);if(c!==0&&!busy){busy=true;if(cancelRun)cancelRun();if(ok&&stops.length)toCover();else byStill(0)}}
 
     // начальное состояние: восстановленная прокрутка или якорь — без блокировки, плёнка стоит на финале
-    if(window.scrollY>10||location.hash){c=last;mark(last);shade(last);still.src=stillSrc(last);still.classList.add('is-on')}else{lock(true);mark(0);shade(0)}
+    if(window.scrollY>10||location.hash){c=last;mark(last);shade(last);ph0(false);still.src=stillSrc(last);still.classList.add('is-on')}else{lock(true);mark(0);shade(0);ph0(true)}
 
     function blocked(){return !pres||d.classList.contains('is-loading')||document.querySelector('.pop.is-open,.sheet.is-open')}
     var lastT=0,lastD=0;
