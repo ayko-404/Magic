@@ -2398,8 +2398,10 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
   (function(){
     var sec=document.getElementById('top'),stick=sec&&(sec.querySelector('.film-stick')||(sec.classList.contains('agh')?sec:null)),cv=document.getElementById('film-smoke');
     if(!sec||!stick||!cv||rm)return;
-    var opt={alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'};
+    var opt={alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power',failIfMajorPerformanceCaveat:true}; // без видеокарты дыма нет (техаудит 24.11.2026)
     var gl=cv.getContext('webgl2',opt),gl2=!!gl;if(!gl)gl=cv.getContext('webgl',opt);if(!gl)return;
+    function swr(g){try{var e=g.getExtension('WEBGL_debug_renderer_info'),r=e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER);return /swiftshader|llvmpipe|software|basic render/i.test(String(r))}catch(x){return false}}
+    if(swr(gl)){var lx=gl.getExtension('WEBGL_lose_context');if(lx)lx.loseContext();return}
     var HF,IF;
     if(gl2){if(!gl.getExtension('EXT_color_buffer_float')&&!gl.getExtension('EXT_color_buffer_half_float'))return;HF=gl.HALF_FLOAT;IF=gl.RGBA16F}
     else{var hx=gl.getExtension('OES_texture_half_float');if(!hx)return;gl.getExtension('EXT_color_buffer_half_float');HF=hx.HALF_FLOAT_OES;IF=gl.RGBA}
