@@ -2,6 +2,7 @@
 <html lang="ru">
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Кальянный кейтеринг для event-агентств в Москве | Magic Catering</title>
 <meta name="description" content="Кальянный кейтеринг для event-агентств в Москве и МО. Команда мастеров, оборудование, доставка, индивидуальные решения. Запросите смету для мероприятия.">
@@ -775,6 +776,9 @@ body{font-family:var(--f-body);font-weight:var(--fw-body);font-size:var(--fz-bod
 .label,.brand-sub,.b4-no,.b3 .pick-group legend,.b3 .field label,.b3 .wish-label{background-size:220% 100%;background-repeat:no-repeat;animation:label-shine 7s ease-in-out infinite alternate}
 .b4-no{animation-duration:5s}
 @keyframes label-shine{from{background-position:100% 0}to{background-position:0 0}}
+/* Техаудит 24.11.2026: анимации в блоках за экраном на паузе — раньше 52 из 64 бесконечных анимаций шли вне экрана,
+   и браузер пересчитывал стили каждый кадр даже без прокрутки. Блок включается за четверть экрана до появления */
+.av-off,.av-off *,.sheet:not(.is-open) .sh-no,.sheet:not(.is-open) .sh-label{animation-play-state:paused!important}
 @media (prefers-reduced-motion: reduce){.label,.brand-sub,.b4-no,.b3 .pick-group legend,.b3 .field label,.b3 .wish-label{animation:none;background-position:50% 0}}
 /* номер шага: общее правило текста шагов (.b4a-cap p) не должно его увеличивать */
 .b4a-cap p.b4-no{font:400 9px/1 var(--f-text);letter-spacing:.3em;margin-bottom:2px}
@@ -2290,9 +2294,11 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 
   // Шапка: плотная после первого экрана; мобильное меню
   var bar=document.getElementById('top-bar'),hero=document.getElementById('top');
-  var heroH=0;function mh(){heroH=hero?hero.offsetHeight:0}mh();
-  function onScroll(){var lim=hero&&!bar.classList.contains('logo-on')?heroH-90:40;bar.classList.toggle('is-solid',window.scrollY>lim)}
-  onScroll();window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',function(){mh();onScroll()});if(hero&&window.ResizeObserver)new ResizeObserver(function(){mh()}).observe(hero);
+  // техаудит 24.11.2026: высота обложки — из ResizeObserver после раскладки; раньше читалась сразу при загрузке и заставляла браузер
+  // разложить всю страницу заранее (~0,7 с при замедлении ×4)
+  var heroH=0,ro=!!(hero&&window.ResizeObserver);function mh(){heroH=hero?hero.offsetHeight:0}if(!ro)mh();
+  function onScroll(){if(hero&&!heroH)return;var lim=hero&&!bar.classList.contains('logo-on')?heroH-90:40;bar.classList.toggle('is-solid',window.scrollY>lim)}
+  onScroll();window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',function(){mh();onScroll()});if(ro)new ResizeObserver(function(){mh();onScroll()}).observe(hero);
   var burger=document.getElementById('burger'),sheet=document.getElementById('sheet'),bicon=document.getElementById('burger-icon'),btext=document.getElementById('burger-text');
   function setSheet(open){
     sheet.classList.toggle('is-open',open);sheet.setAttribute('aria-hidden',open?'false':'true');
@@ -2960,6 +2966,15 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       function spawn(p,any){p.x=Math.random()*W2;p.y=H2-(40+Math.random()*Math.min(180,H2*.3));if(any)p.y-=Math.random()*H2*.5;p.v=26+Math.random()*64;p.a=Math.random()*6.28;p.w=1+Math.random()*2.4;p.s=2.2+Math.random()*3.6;p.l=0;p.m=2.6+Math.random()*4.4;return p}
       function step(t){raf2=requestAnimationFrame(step);if(t-lt<33)return;var d=Math.min(.06,(t-lt)/1000);lt=t;x.clearRect(0,0,W2,H2);x.globalCompositeOperation='lighter';P.forEach(function(p){p.l+=d;p.y-=p.v*d;p.a+=p.w*d;p.x+=Math.sin(p.a)*18*d;var k=p.l/p.m;if(k>=1||p.y<-10){spawn(p);return}x.globalAlpha=Math.min(1,k*7)*(1-k)*(.65+.35*Math.sin(p.a*5));x.drawImage(hot,p.x-p.s/2,p.y-p.s/2,p.s,p.s)})}
       fit2();var cnt=W2<700?18:42;for(var i=0;i<cnt;i++)P.push(spawn({},true));window.addEventListener('resize',fit2,{passive:true});onSight(ft,function(v){if(v&&!on){on=true;lt=performance.now();raf2=requestAnimationFrame(step)}else if(!v&&on){on=false;cancelAnimationFrame(raf2)}})}
+  })();
+
+  // Техаудит 24.11.2026: блок за экраном — CSS-анимации и SVG-анимации (SMIL) на паузе; IntersectionObserver с запасом в четверть экрана
+  (function(){
+    if(!('IntersectionObserver' in window))return;
+    var els=[].slice.call(document.querySelectorAll('main > section, footer'));
+    var io=new IntersectionObserver(function(en){en.forEach(function(e){var on=e.isIntersecting;e.target.classList.toggle('av-off',!on);
+      [].forEach.call(e.target.querySelectorAll('svg'),function(v){if(v.pauseAnimations)on?v.unpauseAnimations():v.pauseAnimations()})})},{rootMargin:'25% 0px 25% 0px'});
+    els.forEach(function(el){io.observe(el)});
   })();
 
   // Плавная прокрутка колесом (23.11.2026): на Mac и Windows колесо мыши листает рывками по 100 px — здесь страница доезжает

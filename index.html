@@ -2,6 +2,7 @@
 <html lang="ru">
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Кальянный кейтеринг в Москве и МО | Magic Catering</title>
 <meta name="description" content="Выездной кальянный кейтеринг в Москве и Московской области: мастера Magic, оборудование и сервис на весь вечер. Корпоративы, свадьбы, закрытые вечера.">
@@ -777,6 +778,9 @@ body{font-family:var(--f-body);font-weight:var(--fw-body);font-size:var(--fz-bod
 .label,.brand-sub,.b4-no,.b3 .pick-group legend,.b3 .field label,.b3 .wish-label{background-size:220% 100%;background-repeat:no-repeat;animation:label-shine 7s ease-in-out infinite alternate}
 .b4-no{animation-duration:5s}
 @keyframes label-shine{from{background-position:100% 0}to{background-position:0 0}}
+/* Техаудит 24.11.2026: анимации в блоках за экраном на паузе — раньше 52 из 64 бесконечных анимаций шли вне экрана,
+   и браузер пересчитывал стили каждый кадр даже без прокрутки. Блок включается за четверть экрана до появления */
+.av-off,.av-off *,.sheet:not(.is-open) .sh-no,.sheet:not(.is-open) .sh-label{animation-play-state:paused!important}
 @media (prefers-reduced-motion: reduce){.label,.brand-sub,.b4-no,.b3 .pick-group legend,.b3 .field label,.b3 .wish-label{animation:none;background-position:50% 0}}
 /* номер шага: общее правило текста шагов (.b4a-cap p) не должно его увеличивать */
 .b4a-cap p.b4-no{font:400 9px/1 var(--f-text);letter-spacing:.3em;margin-bottom:2px}
@@ -2101,28 +2105,37 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     var U={};['uA','uGA','uB','uGB','uRes','uImg','uFA','uFB','uTime','uMix','uDir','uHA','uHB','uKA','uKB'].forEach(function(k){U[k]=gl.getUniformLocation(pr,k)});
     gl.uniform1i(U.uA,0);gl.uniform1i(U.uGA,1);gl.uniform1i(U.uB,2);gl.uniform1i(U.uGB,3);
 
-    function mk(img){var t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+    function mk(img){if(!img)return null;var t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);return t}
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);if(img.close)img.close();return t}
+    // техаудит 24.11.2026: фото расшифровывается вне главного потока (createImageBitmap) — раньше 5 кадров 2400×1500 и их свечение
+    // расшифровывались в главном потоке разом сразу после обложки, и страница подвисала (PSI десктоп — PAGE_HUNG)
+    function pic(url,cb){
+      if(window.createImageBitmap&&window.fetch){fetch(url).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){return createImageBitmap(b)})
+        .then(function(bm){cb(bm,bm.width,bm.height)},function(){img()})}else img();
+      function img(){var i=new Image();i.onload=function(){cb(i,i.naturalWidth,i.naturalHeight)};i.onerror=function(){cb(null,0,0)};i.src=url}}
     var S=[];
-    function load(k,cb){var o=S[k]={ok:false},i=new Image();
-      i.onload=function(){o.tex=mk(i);o.w=i.naturalWidth;o.h=i.naturalHeight;var g=new Image();
-        g.onload=function(){o.glow=mk(g);o.ok=true;cb&&cb();kick()};g.onerror=function(){o.glow=o.tex;o.ok=true;cb&&cb();kick()};
-        g.src='assets/slides/s'+k+'-'+Z+'-glow.webp'};
-      i.src='assets/slides/s'+k+'-'+Z+'.webp'}
-    // сначала обложка, потом остальные по порядку
-    load(0,function(){ph.classList.add('gl');for(var k=1;k<N;k++)load(k)});
+    function load(k,cb){if(S[k]){cb&&cb();return}var o=S[k]={ok:false};
+      pic('assets/slides/s'+k+'-'+Z+'.webp',function(im,w,h){o.tex=mk(im);o.w=w;o.h=h;
+        pic('assets/slides/s'+k+'-'+Z+'-glow.webp',function(g){o.glow=mk(g)||o.tex;o.ok=!!o.tex;cb&&cb();kick()})})}
+    // сначала обложка, потом остальные — по одному, в паузах главного потока
+    var idle=window.requestIdleCallback||function(f){return setTimeout(f,120)};
+    function next(k){if(k>=N)return;idle(function(){load(k,function(){next(k+1)})},{timeout:1500})}
+    load(0,function(){ph.classList.add('gl');next(1)});
+    window.__cvNeed=function(k){load(k)};
 
     var dpr=Math.min(window.devicePixelRatio||1,mob?1.5:1.25),W=0,H=0;
     function size(){var r=cv.getBoundingClientRect(),w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(w&&h&&(w!==W||h!==H)){W=cv.width=w;H=cv.height=h;gl.viewport(0,0,W,H);gl.uniform2f(U.uRes,W,H)}}
     window.addEventListener('resize',function(){size();kick()});
+    if(window.ResizeObserver)new ResizeObserver(function(){size();kick()}).observe(cv);size();
 
     var t0=performance.now();function now(){return (performance.now()-t0)/1000}
     var cur=0,tr=null,shown=[0,0,0,0,0],raf=0,vis=true;
     function kb(k,t){return 1.025+.04*(.5-.5*Math.cos((t-shown[k])*.2417))}
     window.__cvSet=function(k){cur=k;tr=null;shown[k]=now();kick()};
     window.__cvGo=function(from,to,onMid,onEnd){
+      if(!S[to])load(to);
       if(!S[to]||!S[to].ok||!S[cur]||!S[cur].ok){cur=to;shown[to]=now();onMid&&onMid();onEnd&&onEnd();kick();return}
       if(tr)fin();
       tr={to:to,dir:to>cur?1:-1,s:performance.now(),ms:950,onMid:onMid,onEnd:onEnd,mid:false};shown[to]=now();
@@ -2132,7 +2145,13 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;kick()}).observe(sec);
     document.addEventListener('visibilitychange',function(){kick()});
     function bind(u,unit,t){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t)}
-    function frame(){raf=0;if(!S[0]||!S[0].ok||!vis||document.hidden)return;size();
+    // слабое устройство: кадры стабильно дольше 45 мс — сначала ниже разрешение, потом «жар» стоит, кадры рисуются только при смене главы
+    var lastF=0,fts=[],lvl=0,lite=false,fStart=0;
+    function adapt(){var tn=performance.now();if(!fStart)fStart=tn;var d=lastF?tn-lastF:0;lastF=tn;
+      if(tr||tn-fStart<3000||document.documentElement.classList.contains('is-loading')||!d||d>250)return;fts.push(d);
+      if(fts.length<60)return;var a=fts.reduce(function(x,y){return x+y},0)/fts.length;fts=[];
+      if(a>45){lvl++;if(lvl===1){dpr=Math.max(.5,dpr*.6);size()}else lite=true}}
+    function frame(){raf=0;if(!S[0]||!S[0].ok||!vis||document.hidden){lastF=0;return}adapt();
       var t=now(),m=0,b=cur;
       if(tr){var p=Math.min(1,(performance.now()-tr.s)/tr.ms);m=p;b=tr.to;
         if(!tr.mid&&p>=.5){tr.mid=true;tr.onMid&&tr.onMid()}
@@ -2143,6 +2162,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       gl.uniform1f(U.uTime,t);gl.uniform1f(U.uMix,m);gl.uniform1f(U.uDir,tr?tr.dir:1);
       gl.uniform1f(U.uHA,cur===0?1:0);gl.uniform1f(U.uHB,b===0?1:0);gl.uniform1f(U.uKA,kb(cur,t));gl.uniform1f(U.uKB,kb(b,t));
       gl.drawArrays(gl.TRIANGLES,0,3);
+      if(lite&&!tr){lastF=0;return}
       raf=requestAnimationFrame(frame)}
     function kick(){if(!raf)raf=requestAnimationFrame(frame)}
     // отладка без видеокарты: один кадр с заданным состоянием → dataURL
@@ -2552,9 +2572,11 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 
   // Шапка: плотная после первого экрана; мобильное меню
   var bar=document.getElementById('top-bar'),hero=document.getElementById('top');
-  var heroH=0;function mh(){heroH=hero?hero.offsetHeight:0}mh();
-  function onScroll(){var lim=hero&&!bar.classList.contains('logo-on')?heroH-90:40;bar.classList.toggle('is-solid',window.scrollY>lim)}
-  onScroll();window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',function(){mh();onScroll()});if(hero&&window.ResizeObserver)new ResizeObserver(function(){mh()}).observe(hero);
+  // техаудит 24.11.2026: высота обложки — из ResizeObserver после раскладки; раньше читалась сразу при загрузке и заставляла браузер
+  // разложить всю страницу заранее (~0,7 с при замедлении ×4)
+  var heroH=0,ro=!!(hero&&window.ResizeObserver);function mh(){heroH=hero?hero.offsetHeight:0}if(!ro)mh();
+  function onScroll(){if(hero&&!heroH)return;var lim=hero&&!bar.classList.contains('logo-on')?heroH-90:40;bar.classList.toggle('is-solid',window.scrollY>lim)}
+  onScroll();window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',function(){mh();onScroll()});if(ro)new ResizeObserver(function(){mh();onScroll()}).observe(hero);
   var burger=document.getElementById('burger'),sheet=document.getElementById('sheet'),bicon=document.getElementById('burger-icon'),btext=document.getElementById('burger-text');
   function setSheet(open){
     sheet.classList.toggle('is-open',open);sheet.setAttribute('aria-hidden',open?'false':'true');
@@ -3222,6 +3244,15 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
       function spawn(p,any){p.x=Math.random()*W2;p.y=H2-(40+Math.random()*Math.min(180,H2*.3));if(any)p.y-=Math.random()*H2*.5;p.v=26+Math.random()*64;p.a=Math.random()*6.28;p.w=1+Math.random()*2.4;p.s=2.2+Math.random()*3.6;p.l=0;p.m=2.6+Math.random()*4.4;return p}
       function step(t){raf2=requestAnimationFrame(step);if(t-lt<33)return;var d=Math.min(.06,(t-lt)/1000);lt=t;x.clearRect(0,0,W2,H2);x.globalCompositeOperation='lighter';P.forEach(function(p){p.l+=d;p.y-=p.v*d;p.a+=p.w*d;p.x+=Math.sin(p.a)*18*d;var k=p.l/p.m;if(k>=1||p.y<-10){spawn(p);return}x.globalAlpha=Math.min(1,k*7)*(1-k)*(.65+.35*Math.sin(p.a*5));x.drawImage(hot,p.x-p.s/2,p.y-p.s/2,p.s,p.s)})}
       fit2();var cnt=W2<700?18:42;for(var i=0;i<cnt;i++)P.push(spawn({},true));window.addEventListener('resize',fit2,{passive:true});onSight(ft,function(v){if(v&&!on){on=true;lt=performance.now();raf2=requestAnimationFrame(step)}else if(!v&&on){on=false;cancelAnimationFrame(raf2)}})}
+  })();
+
+  // Техаудит 24.11.2026: блок за экраном — CSS-анимации и SVG-анимации (SMIL) на паузе; IntersectionObserver с запасом в четверть экрана
+  (function(){
+    if(!('IntersectionObserver' in window))return;
+    var els=[].slice.call(document.querySelectorAll('main > section, footer'));
+    var io=new IntersectionObserver(function(en){en.forEach(function(e){var on=e.isIntersecting;e.target.classList.toggle('av-off',!on);
+      [].forEach.call(e.target.querySelectorAll('svg'),function(v){if(v.pauseAnimations)on?v.unpauseAnimations():v.pauseAnimations()})})},{rootMargin:'25% 0px 25% 0px'});
+    els.forEach(function(el){io.observe(el)});
   })();
 
   // Плавная прокрутка колесом (23.11.2026): на Mac и Windows колесо мыши листает рывками по 100 px — здесь страница доезжает
