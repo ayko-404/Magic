@@ -741,8 +741,8 @@ html.film-on .skip{display:inline}
   .quick-form .btn{width:100%;justify-content:space-between}
   .manifest{height:220vh}
   .mf-text{font-size:6.6vw}
-  .ml{white-space:normal}
-  .mf-foot{margin-left:var(--g3)}
+  .ml{white-space:normal;padding-left:var(--g1);padding-right:var(--gr)}
+  .mf-foot{margin-left:var(--g1)}
   .mf-stick{justify-content:flex-start;padding-top:calc(96px + env(safe-area-inset-top,0px))}
   .mf-ph-1{left:39vw;right:auto;top:auto;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:min(21vw,12vh)}
   .mf-ph-2{left:4vw;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:min(30vw,17vh)}
@@ -1196,7 +1196,9 @@ html.is-loading .hero-in,html.is-loading .hero-in *,html.is-loading .top,html.is
 @media (max-width:980px){
   .film .cv-c{flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:28px;padding:0 16px 12vh}
   .film .cvc-title{font-size:calc(clamp(42px,12vw,64px) * var(--hs))}
-  .film .cvc-title .ln+.ln{padding-left:12vw}
+  .film .cvc-title .ln+.ln{padding-left:0}
+  .cvc-side{width:100%}
+  .cvc-side .btn{width:100%;justify-content:space-between}
 }
 /* Загрузчик: знак как у логотипа; финал — провал в проём арки (маска с вырезом по форме арки растёт) */
 .ld-mark.lg-m{font-size:40px;letter-spacing:.07em;margin-right:-.07em;font-family:'Cinzel',Georgia,serif;line-height:1}
@@ -1681,6 +1683,7 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
 .pm-facts dd{margin:0;font:400 16px/1.4 var(--f-text);color:var(--sand)}
 /* Конверт на один экран (09.11.2026) */
 .inv{margin-top:clamp(70px,7vw,110px)}
+@media (max-width:980px){.inv{margin-top:12px}}
 .inv-stage{height:100vh;height:100svh;min-height:520px;padding:0;align-items:flex-end}
 .inv-fit{position:relative;flex:none;width:var(--ew);margin-bottom:clamp(12px,2vh,26px);transform-origin:50% 100%;clip-path:inset(-200vh -100vw 0 -100vw)}
 .inv-ph-l{left:0}
@@ -2820,8 +2823,12 @@ html:not(.film-on) .pv-ch:not([data-ch="0"]),html:not(.film-on) .pv-ui{display:n
     if(!box||!env||!let_||!fit)return;
     function measure(){fit.style.transform='none';var eh=env.offsetHeight,lh=let_.offsetHeight,top=eh*.05;
       var ty=Math.min(-eh*.42,eh*.36-(top+lh));let_.style.setProperty('--ty',ty.toFixed(1)+'px');
-      var need=eh-ty-top+28,head=window.innerWidth>980?100:80,mb=parseFloat(getComputedStyle(fit).marginBottom)||0,k=Math.min(1,(stage.clientHeight-head-mb)/need);
-      fit.style.transform=k<1?'scale('+k.toFixed(4)+')':'none'}
+      var mob=window.innerWidth<=980,need=eh-ty-top+28,head=mob?80:100,mb=parseFloat(getComputedStyle(fit).marginBottom)||0;
+      stage.style.height='';stage.style.minHeight='';
+      var k=Math.min(1,((mob?window.innerHeight:stage.clientHeight)-head-mb)/need);
+      fit.style.transform=k<1?'scale('+k.toFixed(4)+')':'none';
+      // 24.11.2026: на телефоне сцена высотой с раскрытое письмо — раньше она была на весь экран и над конвертом висела пустота
+      if(mob){stage.style.height=Math.ceil(need*k+head+mb)+'px';stage.style.minHeight='0'}}
     measure();window.addEventListener('resize',measure);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
     function open(){box.classList.add('is-open')}
     if(rm||!('IntersectionObserver' in window)){open();return}
